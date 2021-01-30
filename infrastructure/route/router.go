@@ -2,7 +2,9 @@ package route
 
 import (
 	"app/graph"
+	"app/graph/directives"
 	"app/graph/generated"
+	"app/infrastructure/middleware"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -13,14 +15,17 @@ import (
 func (s *Server) InitRouter(conn *gorm.DB) {
 	s.Engin.Use(gin.Logger())
 	s.Engin.Use(gin.Recovery())
+	s.Engin.Use(middleware.Middleware())
 
-	h := handler.NewDefaultServer(generated.NewExecutableSchema(
-		generated.Config{
-			Resolvers: &graph.Resolver{
-				DB: conn,
-			},
-		}),
-	)
+	c := generated.Config{
+		Resolvers: &graph.Resolver{
+			DB: conn,
+		},
+	}
+
+	c.Directives.Authentication = directives.Authentication
+
+	h := handler.NewDefaultServer(generated.NewExecutableSchema(c))
 
 	p := playground.Handler("GraphQL", "/query")
 

@@ -21,8 +21,3 @@ type SignUpInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
-
-type SignUpPayload struct {
-	Token string       `json:"token"`
-	User  *models.User `json:"user"`
-}
