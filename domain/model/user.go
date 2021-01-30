@@ -1,4 +1,4 @@
-package domain
+package model
 
 type CreateUser struct {
 	Name     string `json:"name"`

@@ -4,17 +4,21 @@ package graph
 // will be copied through when generating and any unknown code will be moved to the end.
 
 import (
-	"app/domain"
+	"app/domain/model"
 	"app/graph/generated"
 	"context"
 	"fmt"
 )
 
-func (r *mutationResolver) CreateUser(ctx context.Context, input domain.CreateUser) (*domain.User, error) {
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUser) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Users(ctx context.Context) ([]*domain.User, error) {
+func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
