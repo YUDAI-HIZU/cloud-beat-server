@@ -7,17 +7,33 @@ type User {
   name: String!
 }
 
+type SignInPayload {
+  token: String!
+  user: User!
+}
+
+type SignUpPayload {
+  token: String!
+  user: User!
+}
+
 type Query {
   User(id: ID!): User
   Users: [User!]!
 }
 
-input CreateUser {
+input SignUpInput {
   name: String!
   email: String!
   password: String!
 }
 
+input SignInInput {
+  email: String!
+  password: String!
+}
+
 type Mutation {
-  createUser(input: CreateUser!): User!
+  signUp(input: SignUpInput!): SignUpPayload!
+  signIn(input: SignInInput!): SignInPayload!
 }

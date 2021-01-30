@@ -4,21 +4,38 @@ package graph
 // will be copied through when generating and any unknown code will be moved to the end.
 
 import (
-	"app/domain/model"
+	"app/domain/models"
 	"app/graph/generated"
+	"app/graph/model"
+	"app/infrastructure/persistence"
+	"app/usecase"
 	"context"
 	"fmt"
 )
 
-func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUser) (*model.User, error) {
+func (r *mutationResolver) SignUp(ctx context.Context, input model.SignUpInput) (*model.SignUpPayload, error) {
+	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).Create(r.DB, &models.User{
+		Name:     input.Name,
+		Email:    input.Email,
+		Password: input.Password,
+	})
+	fmt.Println(user)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+func (r *mutationResolver) SignIn(ctx context.Context, input model.SignInInput) (*model.SignInPayload, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
+	var user *models.User
+	return user, nil
 }
 
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+func (r *queryResolver) Users(ctx context.Context) ([]*models.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

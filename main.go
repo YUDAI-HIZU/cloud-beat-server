@@ -1,6 +1,8 @@
 package main
 
-import "app/infra/route"
+import (
+	"app/infrastructure/route"
+)
 
 func main() {
 	route.Run()
