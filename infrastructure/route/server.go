@@ -1,7 +1,7 @@
 package route
 
 import (
-	"app/infra/database"
+	"app/infrastructure/database"
 
 	"github.com/gin-gonic/gin"
 )
