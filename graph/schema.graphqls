@@ -2,9 +2,17 @@
 #
 # https://gqlgen.com/getting-started/
 
+scalar Time
+scalar Upload
+scalar Email
+
+directive @authentication on FIELD_DEFINITION
+
 type User {
   id: ID!
   name: String!
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type SignInPayload {
@@ -12,14 +20,9 @@ type SignInPayload {
   user: User!
 }
 
-type SignUpPayload {
-  token: String!
-  user: User!
-}
-
 type Query {
-  User(id: ID!): User
-  Users: [User!]!
+  user(id: ID!): User
+  currentUser: User! @authentication
 }
 
 input SignUpInput {
@@ -34,6 +37,6 @@ input SignInInput {
 }
 
 type Mutation {
-  signUp(input: SignUpInput!): SignUpPayload!
+  signUp(input: SignUpInput!): User!
   signIn(input: SignInInput!): SignInPayload!
 }

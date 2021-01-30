@@ -3,7 +3,6 @@ package persistence
 import (
 	"app/domain/models"
 	"app/domain/repository"
-	"fmt"
 
 	"github.com/jinzhu/gorm"
 )
@@ -15,7 +14,6 @@ func NewUserPersistence() repository.UserRepository {
 }
 
 func (u *userPersistence) Create(db *gorm.DB, user *models.User) (*models.User, error) {
-	fmt.Println("=======", user)
 	r := db.Create(user)
 	if err := r.Error; err != nil {
 		return nil, err
@@ -24,12 +22,23 @@ func (u *userPersistence) Create(db *gorm.DB, user *models.User) (*models.User, 
 }
 
 func (u *userPersistence) GetByID(db *gorm.DB, id int) (*models.User, error) {
-	var user *models.User
+	var user models.User
 	if err := db.Take(&user, id).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, err
 		}
 		return nil, err
 	}
-	return user, nil
+	return &user, nil
+}
+
+func (u *userPersistence) GetByEmail(db *gorm.DB, email string) (*models.User, error) {
+	var user models.User
+	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return nil, err
+		}
+		return nil, err
+	}
+	return &user, nil
 }

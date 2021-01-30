@@ -10,33 +10,46 @@ import (
 	"app/infrastructure/persistence"
 	"app/usecase"
 	"context"
-	"fmt"
+	"strconv"
 )
 
-func (r *mutationResolver) SignUp(ctx context.Context, input model.SignUpInput) (*model.SignUpPayload, error) {
+func (r *mutationResolver) SignUp(ctx context.Context, input model.SignUpInput) (*models.User, error) {
 	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).Create(r.DB, &models.User{
 		Name:     input.Name,
 		Email:    input.Email,
 		Password: input.Password,
 	})
-	fmt.Println(user)
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
-}
-
-func (r *mutationResolver) SignIn(ctx context.Context, input model.SignInInput) (*model.SignInPayload, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
-	var user *models.User
 	return user, nil
 }
 
-func (r *queryResolver) Users(ctx context.Context) ([]*models.User, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) SignIn(ctx context.Context, input model.SignInInput) (*model.SignInPayload, error) {
+	user, token, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).SignIn(r.DB, input.Email, input.Password)
+	if err != nil {
+		return nil, err
+	}
+	payload := &model.SignInPayload{User: user, Token: token}
+	return payload, nil
+}
+
+func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		return nil, err
+	}
+	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByID(r.DB, intID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (r *queryResolver) CurrentUser(ctx context.Context) (*models.User, error) {
+	id := ctx.Value("userID")
+	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByID(r.DB, id.(int))
+	return user, err
 }
 
 // Mutation returns generated.MutationResolver implementation.
