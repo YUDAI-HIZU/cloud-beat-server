@@ -15,7 +15,8 @@ import (
 func (s *Server) InitRouter(conn *gorm.DB) {
 	s.Engin.Use(gin.Logger())
 	s.Engin.Use(gin.Recovery())
-	s.Engin.Use(middleware.Middleware())
+	s.Engin.Use(middleware.Auth())
+	s.Engin.Use(middleware.Cors())
 
 	c := generated.Config{
 		Resolvers: &graph.Resolver{
