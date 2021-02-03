@@ -47,8 +47,8 @@ func (r *queryResolver) User(ctx context.Context, id string) (*models.User, erro
 }
 
 func (r *queryResolver) CurrentUser(ctx context.Context) (*models.User, error) {
-	id := ctx.Value("userID")
-	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByID(r.DB, id.(int))
+	id := int(ctx.Value("userID").(float64))
+	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByID(r.DB, id)
 	return user, err
 }
 
