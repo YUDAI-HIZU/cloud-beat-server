@@ -13,12 +13,12 @@ func NewUserPersistence() repository.UserRepository {
 	return &userPersistence{}
 }
 
-func (u *userPersistence) Create(db *gorm.DB, user *models.User) (*models.User, error) {
+func (u *userPersistence) Create(db *gorm.DB, user *models.User) error {
 	r := db.Create(user)
 	if err := r.Error; err != nil {
-		return nil, err
+		return err
 	}
-	return user, nil
+	return nil
 }
 
 func (u *userPersistence) GetByID(db *gorm.DB, id int) (*models.User, error) {
@@ -32,9 +32,9 @@ func (u *userPersistence) GetByID(db *gorm.DB, id int) (*models.User, error) {
 	return &user, nil
 }
 
-func (u *userPersistence) GetByEmail(db *gorm.DB, email string) (*models.User, error) {
+func (u *userPersistence) GetByUID(db *gorm.DB, uid string) (*models.User, error) {
 	var user models.User
-	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+	if err := db.Where("uid = ?", uid).First(&user).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, err
 		}

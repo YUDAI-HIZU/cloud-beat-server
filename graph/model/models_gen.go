@@ -2,22 +2,7 @@
 
 package model
 
-import (
-	"app/domain/models"
-)
-
-type SignInInput struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type SignInPayload struct {
-	Token string       `json:"token"`
-	User  *models.User `json:"user"`
-}
-
 type SignUpInput struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	DisplayName string `json:"displayName"`
+	UID         string `json:"uid"`
 }

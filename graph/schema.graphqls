@@ -10,14 +10,10 @@ directive @authentication on FIELD_DEFINITION
 
 type User {
   id: ID!
-  name: String!
+  uid: String!
+  displayName: String!
   createdAt: Time!
   updatedAt: Time!
-}
-
-type SignInPayload {
-  token: String!
-  user: User!
 }
 
 type Query {
@@ -26,17 +22,10 @@ type Query {
 }
 
 input SignUpInput {
-  name: String!
-  email: String!
-  password: String!
-}
-
-input SignInInput {
-  email: String!
-  password: String!
+  displayName: String!
+  uid: String!
 }
 
 type Mutation {
-  signUp(input: SignUpInput!): User!
-  signIn(input: SignInInput!): SignInPayload!
+  signUp(input: SignUpInput!): Boolean
 }
