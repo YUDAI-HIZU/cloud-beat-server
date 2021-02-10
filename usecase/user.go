@@ -1,15 +1,10 @@
 package usecase
 
 import (
-	"app/config"
 	"app/domain/models"
 	"app/domain/repository"
-	"strconv"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type userUseCase struct {
@@ -17,9 +12,9 @@ type userUseCase struct {
 }
 
 type UserUseCase interface {
-	Create(db *gorm.DB, user *models.User) (*models.User, error)
+	Create(db *gorm.DB, user *models.User) error
 	GetByID(db *gorm.DB, id int) (*models.User, error)
-	SignIn(db *gorm.DB, email string, password string) (*models.User, string, error)
+	GetByUID(db *gorm.DB, uid string) (*models.User, error)
 }
 
 func NewUserUseCase(u repository.UserRepository) UserUseCase {
@@ -28,17 +23,13 @@ func NewUserUseCase(u repository.UserRepository) UserUseCase {
 	}
 }
 
-func (u userUseCase) Create(db *gorm.DB, user *models.User) (*models.User, error) {
-	encryptedPassword, err := generateEncryptedPassword(user.Password)
+func (u userUseCase) Create(db *gorm.DB, user *models.User) error {
+	var err error
+	err = u.userRepository.Create(db, user)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	user.EncryptedPassword = encryptedPassword
-	user, err = u.userRepository.Create(db, user)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+	return nil
 }
 
 func (u userUseCase) GetByID(db *gorm.DB, id int) (*models.User, error) {
@@ -49,43 +40,10 @@ func (u userUseCase) GetByID(db *gorm.DB, id int) (*models.User, error) {
 	return user, nil
 }
 
-func (u userUseCase) SignIn(db *gorm.DB, email string, password string) (*models.User, string, error) {
-	user, err := u.userRepository.GetByEmail(db, email)
+func (u userUseCase) GetByUID(db *gorm.DB, uid string) (*models.User, error) {
+	user, err := u.userRepository.GetByUID(db, uid)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
-	if err := compareHashAndPassWord(user.EncryptedPassword, password); err != nil {
-		return nil, "", err
-	}
-	token, err := generateToken(user)
-	return user, token, nil
-}
-
-func generateEncryptedPassword(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-	return string(hash), nil
-}
-
-func compareHashAndPassWord(encryptedPassword string, password string) error {
-	if err := bcrypt.CompareHashAndPassword([]byte(encryptedPassword), []byte(password)); err != nil {
-		return err
-	}
-	return nil
-}
-
-func generateToken(user *models.User) (string, error) {
-	id, err := strconv.Atoi(user.ID)
-	if err != nil {
-		return "", err
-	}
-	claims := &jwt.MapClaims{
-		"exp":    time.Now().Add(24 * 7 * time.Hour).Unix(),
-		"userID": id,
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(config.JwtSecret))
-	return tokenString, err
+	return user, nil
 }

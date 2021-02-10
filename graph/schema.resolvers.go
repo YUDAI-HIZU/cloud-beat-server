@@ -13,25 +13,16 @@ import (
 	"strconv"
 )
 
-func (r *mutationResolver) SignUp(ctx context.Context, input model.SignUpInput) (*models.User, error) {
-	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).Create(r.DB, &models.User{
-		Name:     input.Name,
-		Email:    input.Email,
-		Password: input.Password,
+func (r *mutationResolver) SignUp(ctx context.Context, input model.SignUpInput) (*bool, error) {
+	err := usecase.NewUserUseCase(persistence.NewUserPersistence()).Create(r.DB, &models.User{
+		DisplayName: input.DisplayName,
+		UID:         input.UID,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return user, nil
-}
-
-func (r *mutationResolver) SignIn(ctx context.Context, input model.SignInInput) (*model.SignInPayload, error) {
-	user, token, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).SignIn(r.DB, input.Email, input.Password)
-	if err != nil {
-		return nil, err
-	}
-	payload := &model.SignInPayload{User: user, Token: token}
-	return payload, nil
+	ok := true
+	return &ok, nil
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
@@ -47,8 +38,8 @@ func (r *queryResolver) User(ctx context.Context, id string) (*models.User, erro
 }
 
 func (r *queryResolver) CurrentUser(ctx context.Context) (*models.User, error) {
-	id := int(ctx.Value("userID").(float64))
-	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByID(r.DB, id)
+	uid := ctx.Value("UID").(string)
+	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByUID(r.DB, uid)
 	return user, err
 }
 
