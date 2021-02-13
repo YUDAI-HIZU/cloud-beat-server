@@ -12,8 +12,10 @@ type User {
   id: ID!
   uid: String!
   displayName: String!
-  createdAt: Time!
-  updatedAt: Time!
+  webUrl: String
+  introduction: String
+  createdAt: Time
+  updatedAt: Time
 }
 
 type Query {
@@ -21,11 +23,18 @@ type Query {
   currentUser: User! @authentication
 }
 
-input SignUpInput {
+input CreateUserInput {
   displayName: String!
   uid: String!
 }
 
+input UpdateUserInput {
+  displayName: String
+  webUrl: String
+  introduction: String
+}
+
 type Mutation {
-  signUp(input: SignUpInput!): Boolean
+  createUser(input: CreateUserInput!): User!
+  updateUser(input: UpdateUserInput!): User! @authentication
 }
