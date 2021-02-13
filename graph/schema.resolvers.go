@@ -13,16 +13,29 @@ import (
 	"strconv"
 )
 
-func (r *mutationResolver) SignUp(ctx context.Context, input model.SignUpInput) (*bool, error) {
-	err := usecase.NewUserUseCase(persistence.NewUserPersistence()).Create(r.DB, &models.User{
-		DisplayName: input.DisplayName,
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*models.User, error) {
+	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).Create(r.DB, &models.User{
 		UID:         input.UID,
+		DisplayName: input.DisplayName,
 	})
 	if err != nil {
 		return nil, err
 	}
-	ok := true
-	return &ok, nil
+	return user, nil
+}
+
+func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*models.User, error) {
+	uid := ctx.Value("UID").(string)
+	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).Update(r.DB, &models.User{
+		UID:          uid,
+		DisplayName:  *input.DisplayName,
+		WebURL:       *input.WebURL,
+		Introduction: *input.Introduction,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {

@@ -2,7 +2,13 @@
 
 package model
 
-type SignUpInput struct {
+type CreateUserInput struct {
 	DisplayName string `json:"displayName"`
 	UID         string `json:"uid"`
+}
+
+type UpdateUserInput struct {
+	DisplayName  *string `json:"displayName"`
+	WebURL       *string `json:"webUrl"`
+	Introduction *string `json:"introduction"`
 }
