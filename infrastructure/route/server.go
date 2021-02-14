@@ -2,6 +2,7 @@ package route
 
 import (
 	"app/infrastructure/database"
+	"app/infrastructure/gcp"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +20,7 @@ func newServer() *Server {
 func Run() {
 	s := newServer()
 	conn := database.InitDB()
-	s.InitRouter(conn)
+	client := gcp.InitClient()
+	s.InitRouter(conn, client)
 	s.Engin.Run()
 }
