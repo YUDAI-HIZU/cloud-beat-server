@@ -14,6 +14,8 @@ type User {
   displayName: String!
   webUrl: String
   introduction: String
+  iconUrl: String
+  coverUrl: String
   createdAt: Time
   updatedAt: Time
 }
@@ -24,14 +26,16 @@ type Query {
 }
 
 input CreateUserInput {
-  displayName: String!
   uid: String!
+  displayName: String!
 }
 
 input UpdateUserInput {
   displayName: String
   webUrl: String
   introduction: String
+  iconImage: Upload
+  coverImage: Upload
 }
 
 type Mutation {

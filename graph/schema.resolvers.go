@@ -14,28 +14,13 @@ import (
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*models.User, error) {
-	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).Create(r.DB, &models.User{
-		UID:         input.UID,
-		DisplayName: input.DisplayName,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+	u := usecase.NewUserUseCase(persistence.NewUserPersistence())
+	return u.Create(r.DB, input)
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*models.User, error) {
-	uid := ctx.Value("UID").(string)
-	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).Update(r.DB, &models.User{
-		UID:          uid,
-		DisplayName:  *input.DisplayName,
-		WebURL:       *input.WebURL,
-		Introduction: *input.Introduction,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+	u := usecase.NewUserUseCase(persistence.NewUserPersistence())
+	return u.Update(r.DB, ctx.Value("UID").(string), input)
 }
 
 func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
@@ -43,17 +28,12 @@ func (r *queryResolver) User(ctx context.Context, id string) (*models.User, erro
 	if err != nil {
 		return nil, err
 	}
-	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByID(r.DB, intID)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+	return usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByID(r.DB, intID)
 }
 
 func (r *queryResolver) CurrentUser(ctx context.Context) (*models.User, error) {
 	uid := ctx.Value("UID").(string)
-	user, err := usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByUID(r.DB, uid)
-	return user, err
+	return usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByUID(r.DB, uid)
 }
 
 // Mutation returns generated.MutationResolver implementation.
