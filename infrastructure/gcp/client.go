@@ -3,7 +3,6 @@ package gcp
 import (
 	"app/config"
 	"context"
-	"fmt"
 
 	"cloud.google.com/go/storage"
 	"google.golang.org/api/option"
@@ -19,7 +18,7 @@ func InitClient() *storage.Client {
 	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.GCSAccount)))
 
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 	return client
 }
