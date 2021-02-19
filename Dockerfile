@@ -37,4 +37,4 @@ COPY --from=builder /go/src/app .
 
 RUN goose up
 
-CMD ["pwd && ./main"]
+CMD ["./main"]
