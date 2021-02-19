@@ -1,6 +1,6 @@
 FROM golang:1.15.2-alpine as dev
 
-WORKDIR /go/src/app
+WORKDIR /app
 
 ENV GO111MODULE=on
 
@@ -8,9 +8,6 @@ RUN apk add --no-cache alpine-sdk git \
     && go get github.com/pilu/fresh \
     && go get bitbucket.org/liamstask/goose/cmd/goose
 
-COPY go.mod .
-COPY go.sum .
-RUN go mod download
 COPY . .
 
 CMD ["fresh"]
@@ -18,7 +15,7 @@ CMD ["fresh"]
 
 FROM golang:1.15.2-alpine as builder
 
-WORKDIR /go/src/app
+WORKDIR /src
 
 COPY go.mod .
 COPY go.sum .
@@ -28,13 +25,11 @@ COPY . .
 
 RUN go build -o main .
 
-# 本番用
+
 FROM alpine as prod
 
-WORKDIR /go/src/app
+WORKDIR /app
 
-COPY --from=builder /go/src/app .
-
-RUN goose up
+COPY --from=builder /src/main .
 
 CMD ["./main"]
