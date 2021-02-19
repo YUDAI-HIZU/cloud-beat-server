@@ -35,4 +35,6 @@ WORKDIR /go/src/app
 
 COPY --from=builder /go/src/app .
 
-CMD ["./main"]
+RUN goose up
+
+CMD ["pwd && ./main"]
