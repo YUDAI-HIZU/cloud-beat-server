@@ -3,6 +3,7 @@ services:
   app:
     build: 
       context: .
+      target: dev
     volumes:
       - ./:/go/src/app
     env_file:
