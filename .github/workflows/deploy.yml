@@ -23,8 +23,8 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-    # - name: Use gcloud CLI
-    #   run: gcloud info
+    - name: Use gcloud CLI
+      run: gcloud info
 
     # - name: Configure docker to use the gcloud cli
     #   run: gcloud auth configure-docker --quiet
