@@ -26,8 +26,6 @@ jobs:
 
       - name: Configure docker to use the gcloud cli
         run: gcloud auth configure-docker --quiet
-      - name: gcloud info
-        run: gcloud auth list
 
       - name: build
         run: docker build --target prod -t $IMAGE .
