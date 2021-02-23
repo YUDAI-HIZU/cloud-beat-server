@@ -27,14 +27,13 @@ jobs:
       - name: Configure docker to use the gcloud cli
         run: gcloud auth configure-docker --quiet
 
-      - name: build
+      - name: Build
         run: docker build --target prod -t $IMAGE .
 
-      - name: push
+      - name: Push
         run: docker push $IMAGE
 
-      - name: deploy
-        id: deploy-service
+      - name: Deploy
         uses: google-github-actions/deploy-cloudrun@v0.1.0
         with:
           image: $IMAGE
