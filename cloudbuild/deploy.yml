@@ -9,15 +9,7 @@ steps:
       - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     id: Deploy
-    args:
-      - run
-      - services
-      - update
-      - $_SERVICE_NAME
-      - '--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
-      - '--platform=managed'
-      - '--region=$_DEPLOY_REGION'
-      - '--quiet'
+    args: ['run', 'services', 'update', '$_SERVICE_NAME', '--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA', '--platform=managed', '--region=$_DEPLOY_REGION', '--quiet']
     entrypoint: gcloud
 images:
   - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
