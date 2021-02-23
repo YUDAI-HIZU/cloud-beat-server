@@ -1,44 +1,44 @@
 name: Deploy
 
-on: 
+on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 env:
   IMAGE: ${{ secrets.GCP_HOST }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}:${{ github.sha }}
 
 jobs:
   deploy:
-    name: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          version: 'latest'
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-      - name: Use gcloud CLI
-        run: gcloud info
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: Setup gcloud
+      uses: google-github-actions/setup-gcloud@master
+      with:
+        version: 'latest'
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+    - name: Use gcloud CLI
+      run: gcloud info
 
-      - name: Configure docker to use the gcloud cli
-        run: gcloud auth configure-docker --quiet
+    - name: Configure docker to use the gcloud cli
+      run: gcloud auth configure-docker --quiet
 
-      - name: build
-        run: docker build --target prod -t $IMAGE .
+    - name: build
+      run: docker build --target prod -t $IMAGE .
 
-      - name: push
-        run: docker push $IMAGE
+    - name: push
+      run: docker push $IMAGE
 
-      - name: deploy
-        id: deploy-service
-        uses: google-github-actions/deploy-cloudrun@v0.1.0
-        with:
-          image: $IMAGE
-          service: ${{ secrets.GCP_SERVICE_NAME }}
-          project: ${{ secrets.GCP_PROJECT_ID }}
-          credentials: ${{ secrets.GCP_CREDENTIALS }}
+    - name: deploy
+      id: deploy-service
+      uses: google-github-actions/deploy-cloudrun@v0.1.0
+      with:
+        image: $IMAGE
+        service: ${{ secrets.GCP_SERVICE_NAME }}
+        project: ${{ secrets.GCP_PROJECT_ID }}
+        credentials: ${{ secrets.GCP_CREDENTIALS }}
