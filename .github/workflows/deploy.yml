@@ -33,11 +33,11 @@ jobs:
       - name: push
         run: docker push $IMAGE
 
-    # - name: deploy
-    #   id: deploy-service
-    #   uses: google-github-actions/deploy-cloudrun@v0.1.0
-    #   with:
-    #     image: $IMAGE
-    #     service: ${{ secrets.GCP_SERVICE_NAME }}
-    #     project: ${{ secrets.GCP_PROJECT_ID }}
-    #     credentials: ${{ secrets.GCP_CREDENTIALS }}
+      - name: deploy
+        id: deploy-service
+        uses: google-github-actions/deploy-cloudrun@v0.1.0
+        with:
+          image: $IMAGE
+          service: ${{ secrets.GCP_SERVICE_NAME }}
+          project: ${{ secrets.GCP_PROJECT_ID }}
+          credentials: ${{ secrets.GCP_CREDENTIALS }}
