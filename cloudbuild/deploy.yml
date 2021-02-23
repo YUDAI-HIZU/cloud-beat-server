@@ -20,10 +20,8 @@ steps:
       - services
       - update
       - $_SERVICE_NAME
-      - '--platform=managed'
       - '--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
-      - >-
-        --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID,$_LABELS
+      - '--platform=managed'
       - '--region=$_DEPLOY_REGION'
       - '--quiet'
     id: Deploy
@@ -37,8 +35,6 @@ substitutions:
   _SERVICE_NAME: cloud-beat-server
   _DEPLOY_REGION: us-east1
   _GCR_HOSTNAME: us.gcr.io
-  _LABELS: gcb-trigger-id=4aa451b2-dfa8-42a7-b2e8-59430ff6d095
-  _TRIGGER_ID: 4aa451b2-dfa8-42a7-b2e8-59430ff6d095
 tags:
   - gcp-cloud-build-deploy-cloud-run
   - gcp-cloud-build-deploy-cloud-run-managed
