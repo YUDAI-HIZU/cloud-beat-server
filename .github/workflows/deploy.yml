@@ -36,6 +36,7 @@ jobs:
       - name: Push
         run: docker push $IMAGE
 
+        
       - name: Deploy
         run: |
             gcloud run deploy $SERVICE_NAME \
