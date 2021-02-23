@@ -4,9 +4,7 @@ steps:
     args: ['build', '--target', 'prod', '-t', '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA', '.']
   - name: gcr.io/cloud-builders/docker
     id: Push
-    args:
-      - push
-      - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+    args: ['push', '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA']
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     id: Deploy
     args: ['run', 'services', 'update', '$_SERVICE_NAME', '--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA', '--platform=managed', '--region=$_DEPLOY_REGION', '--quiet']
@@ -16,7 +14,6 @@ images:
 options:
   substitutionOption: ALLOW_LOOSE
 substitutions:
-  _PLATFORM: managed
   _SERVICE_NAME: cloud-beat-server
   _DEPLOY_REGION: us-east1
   _GCR_HOSTNAME: us.gcr.io
