@@ -7,6 +7,7 @@ import (
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
+	"firebase.google.com/go/messaging"
 	"google.golang.org/api/option"
 )
 
@@ -26,6 +27,15 @@ func InitAuth(ctx context.Context) *auth.Client {
 	client, err := app.Auth(ctx)
 	if err != nil {
 		log.Fatalf("error initializing auth: %v\n", err)
+		panic(err)
+	}
+	return client
+}
+
+func InitMessaging(ctx context.Context) *messaging.Client {
+	client, err := app.Messaging(ctx)
+	if err != nil {
+		log.Fatalf("error getting Messaging client: %v\n", err)
 		panic(err)
 	}
 	return client

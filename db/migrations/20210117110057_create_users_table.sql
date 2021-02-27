@@ -1,18 +1,19 @@
 
 -- +goose Up
 -- SQL in section 'Up' is executed when this migration is applied
-create table users (
-    id                 bigint(20) not null auto_increment primary key,
-    uid                varchar(255) unique not null,
-    display_name       varchar(255) default null,
-    web_url            varchar(255) default null,
-    introduction       varchar(255) default null,
-    icon_name    varchar(255) default null,
-    cover_name   varchar(255) default null,
-    created_at         datetime not null,
-    updated_at         datetime not null
+CREATE TABLE users (
+  id                 BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  uid                VARCHAR(255) UNIQUE NOT NULL,
+  display_name       VARCHAR(255) DEFAULT NULL,
+  web_url            VARCHAR(255) DEFAULT NULL,
+  introduction       VARCHAR(255) DEFAULT NULL,
+  icon_name          VARCHAR(255) DEFAULT NULL,
+  cover_name         VARCHAR(255) DEFAULT NULL,
+  created_at         DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at         DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX(uid, display_name)
 );
 
 -- +goose Down
 -- SQL section 'Down' is executed when this migration is rolled back
-drop table users;
+DROP TABLE users;
