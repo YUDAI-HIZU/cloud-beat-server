@@ -5,13 +5,13 @@ services:
       context: .
       target: dev
     volumes:
-      - ./:/go/src/app
+      - .:/app
     env_file:
       - .env
     tty: true
     ports:
       - "8080:8080"
-    links:
+    depends_on:
       - db
 
   db:
