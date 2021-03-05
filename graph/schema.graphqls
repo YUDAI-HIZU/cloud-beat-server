@@ -8,14 +8,37 @@ scalar Email
 
 directive @authentication on FIELD_DEFINITION
 
+type DeviceToken {
+  id: ID!
+  userID: ID!
+  Token: String!
+  createdAt: Time
+  updatedAt: Time
+}
+
+enum ImageOwnerType {
+  USER_ICON,
+  USER_COVER
+}
+
+type Image {
+  id: ID!
+  name: String!
+  ownerID: ID!
+  ownerType: ImageOwnerType!
+  url: String!
+  createdAt: Time
+  updatedAt: Time
+}
+
 type User {
   id: ID!
   uid: String!
   displayName: String!
   webUrl: String
   introduction: String
-  iconUrl: String
-  coverUrl: String
+  icon: Image
+  cover: Image
   createdAt: Time
   updatedAt: Time
 }
@@ -25,20 +48,29 @@ type Query {
   currentUser: User! @authentication
 }
 
+input CreateImageInput {
+  image: Upload!
+  ownerType: ImageOwnerType!
+}
+
 input CreateUserInput {
   uid: String!
   displayName: String!
+}
+
+input UpdateImageInput {
+  image: Upload!
 }
 
 input UpdateUserInput {
   displayName: String
   webUrl: String
   introduction: String
-  iconImage: Upload
-  coverImage: Upload
 }
 
 type Mutation {
+  createImage(input: CreateImageInput!): Image! @authentication
   createUser(input: CreateUserInput!): User!
+  updateImage(input: UpdateImageInput!): Image! @authentication
   updateUser(input: UpdateUserInput!): User! @authentication
 }
