@@ -1,4 +1,4 @@
-package gcp
+package storage
 
 import (
 	"app/config"

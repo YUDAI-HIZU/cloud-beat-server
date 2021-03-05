@@ -1,24 +1,46 @@
 package persistence
 
 import (
+	"app/config"
+	"app/domain/models"
+	"app/domain/repository"
+	"app/graph/model"
 	"context"
 	"fmt"
 	"io"
+
+	"cloud.google.com/go/storage"
+	"github.com/jinzhu/gorm"
 )
 
-type ImagePersistence struct {
-	file      *FilePersistence
-	keyPrefix string
+type imagePersistence struct {
+	db      *gorm.DB
+	storage *storage.Client
 }
 
-func NewImagePersistence(keyPrefix string) *ImagePersistence {
-	return &ImagePersistence{
-		file:      NewFilePersistence(context.Background()),
-		keyPrefix: fmt.Sprintf("images/%s", keyPrefix),
+func NewImagePersistence(db *gorm.DB, storage *storage.Client) repository.ImageRepository {
+	return &imagePersistence{
+		db:      db,
+		storage: storage,
 	}
 }
 
-func (i *ImagePersistence) Upload(fileName string, imageFile io.Reader) {
-	key := fmt.Sprintf("%s/%s", i.keyPrefix, fileName)
-	i.file.Upload(imageFile, key)
+func (i *imagePersistence) Create(image *models.Image) (*models.Image, error) {
+	if err := i.db.Create(image).Error; err != nil {
+		return nil, err
+	}
+	return image, nil
+}
+
+func (i *imagePersistence) Upload(id int, name string, input model.CreateImageInput) error {
+	path := fmt.Sprintf("%d/%s", id, name)
+	sw := i.storage.Bucket(config.BucketName).Object(path).NewWriter(context.Background())
+	sw.ContentType = input.Image.ContentType
+	if _, err := io.Copy(sw, input.Image.File); err != nil {
+		return err
+	}
+	if err := sw.Close(); err != nil {
+		return err
+	}
+	return nil
 }

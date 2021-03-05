@@ -10,30 +10,38 @@ import (
 	"app/infrastructure/persistence"
 	"app/usecase"
 	"context"
-	"strconv"
 )
 
+func (r *mutationResolver) CreateImage(ctx context.Context, input model.CreateImageInput) (*models.Image, error) {
+	id := ctx.Value("ID").(int)
+	i := usecase.NewImageUseCase(persistence.NewImagePersistence(r.DB, r.Storage))
+	return i.Create(id, input)
+}
+
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*models.User, error) {
-	u := usecase.NewUserUseCase(persistence.NewUserPersistence())
-	return u.Create(r.DB, input)
+	u := usecase.NewUserUseCase(persistence.NewUserPersistence(r.DB))
+	return u.Create(input)
+}
+
+func (r *mutationResolver) UpdateImage(ctx context.Context, input model.UpdateImageInput) (*models.Image, error) {
+	panic("o")
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*models.User, error) {
-	u := usecase.NewUserUseCase(persistence.NewUserPersistence())
-	return u.Update(r.DB, ctx.Value("UID").(string), input)
+	id := ctx.Value("ID").(int)
+	u := usecase.NewUserUseCase(persistence.NewUserPersistence(r.DB))
+	return u.Update(id, input)
 }
 
-func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
-	intID, err := strconv.Atoi(id)
-	if err != nil {
-		return nil, err
-	}
-	return usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByID(r.DB, intID)
+func (r *queryResolver) User(ctx context.Context, id int) (*models.User, error) {
+	u := usecase.NewUserUseCase(persistence.NewUserPersistence(r.DB))
+	return u.GetByID(id)
 }
 
 func (r *queryResolver) CurrentUser(ctx context.Context) (*models.User, error) {
-	uid := ctx.Value("UID").(string)
-	return usecase.NewUserUseCase(persistence.NewUserPersistence()).GetByUID(r.DB, uid)
+	id := ctx.Value("ID").(int)
+	u := usecase.NewUserUseCase(persistence.NewUserPersistence(r.DB))
+	return u.GetByID(id)
 }
 
 // Mutation returns generated.MutationResolver implementation.

@@ -1,4 +1,3 @@
-
 -- +goose Up
 -- SQL in section 'Up' is executed when this migration is applied
 CREATE TABLE users (
@@ -7,11 +6,9 @@ CREATE TABLE users (
   display_name       VARCHAR(255) DEFAULT NULL,
   web_url            VARCHAR(255) DEFAULT NULL,
   introduction       VARCHAR(255) DEFAULT NULL,
-  icon_name          VARCHAR(255) DEFAULT NULL,
-  cover_name         VARCHAR(255) DEFAULT NULL,
   created_at         DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at         DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  INDEX(uid, display_name)
+  INDEX(uid, display_name, introduction)
 );
 
 -- +goose Down

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 )
 
@@ -11,6 +12,8 @@ var (
 	GCSAccount      string
 	FirebaseAccount string
 	BucketName      string
+	StorageURL      string
+	AssetEndpoint   string
 )
 
 func init() {
@@ -20,4 +23,6 @@ func init() {
 	GCSAccount = os.Getenv("GCS_ACCOUNT")
 	FirebaseAccount = os.Getenv("FIREBASE_ACCOUNT")
 	BucketName = os.Getenv("BUCKET_NAME")
+	StorageURL = os.Getenv("STORAGE_URL")
+	AssetEndpoint = fmt.Sprintf("%s/%s", StorageURL, BucketName)
 }

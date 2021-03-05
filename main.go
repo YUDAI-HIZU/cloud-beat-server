@@ -1,11 +1,8 @@
 package main
 
-import (
-	"app/infrastructure/route"
-	"log"
-)
+import "app/infrastructure/router"
 
 func main() {
-	log.Println("===================v6===================")
-	route.Run()
+	r := router.NewRouter()
+	r.Run()
 }

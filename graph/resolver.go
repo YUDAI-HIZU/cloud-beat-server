@@ -2,6 +2,7 @@ package graph
 
 import (
 	"cloud.google.com/go/storage"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -10,6 +11,6 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	DB     *gorm.DB
-	Client *storage.Client
+	DB      *gorm.DB
+	Storage *storage.Client
 }

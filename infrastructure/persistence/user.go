@@ -7,42 +7,35 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type userPersistence struct{}
-
-func NewUserPersistence() repository.UserRepository {
-	return &userPersistence{}
+type userPersistence struct {
+	db *gorm.DB
 }
 
-func (u *userPersistence) Create(db *gorm.DB, user *models.User) (*models.User, error) {
-	r := db.Create(user)
+func NewUserPersistence(db *gorm.DB) repository.UserRepository {
+	return &userPersistence{
+		db: db,
+	}
+}
+
+func (u *userPersistence) Create(user *models.User) (*models.User, error) {
+	r := u.db.Create(user)
 	if err := r.Error; err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (u *userPersistence) Update(db *gorm.DB, user *models.User) (*models.User, error) {
-	r := db.Model(user).Where("uid = ?", user.UID).Update(user)
+func (u *userPersistence) Update(user *models.User) (*models.User, error) {
+	r := u.db.Update(user)
 	if err := r.Error; err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (u *userPersistence) GetByID(db *gorm.DB, id int) (*models.User, error) {
+func (u *userPersistence) GetByID(id int) (*models.User, error) {
 	var user models.User
-	if err := db.Take(&user, id).Error; err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			return nil, err
-		}
-		return nil, err
-	}
-	return &user, nil
-}
-
-func (u *userPersistence) GetByUID(db *gorm.DB, uid string) (*models.User, error) {
-	var user models.User
-	if err := db.Where("uid = ?", uid).First(&user).Error; err != nil {
+	if err := u.db.Preload("Icon", "owner_type = ?", models.ImageOwnerTypeUserIcon).Preload("Cover", "owner_type = ?", models.ImageOwnerTypeUserCover).Take(&user, id).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, err
 		}

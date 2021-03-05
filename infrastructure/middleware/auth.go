@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"app/infrastructure/firebase"
+	"app/infrastructure/auth"
 	"context"
 	"net/http"
 	"strings"
@@ -13,10 +13,10 @@ import (
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
-		client := firebase.InitAuth(ctx)
+		auth := auth.NewAuthClient(ctx)
 		authorization := c.Request.Header.Get("Authorization")
 		idToken := strings.Replace(authorization, "Bearer ", "", 1)
-		token, err := client.VerifyIDToken(ctx, idToken)
+		token, err := auth.VerifyIDToken(ctx, idToken)
 		if err != nil {
 			ctx = context.WithValue(
 				ctx,
@@ -33,7 +33,9 @@ func Auth() gin.HandlerFunc {
 			c.Next()
 			return
 		}
-		ctx = context.WithValue(ctx, "UID", token.UID)
+		id := int(token.Claims["ID"].(float64))
+		ctx = context.WithValue(ctx, "ID", id)
+		c.Set("ID", id)
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}

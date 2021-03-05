@@ -7,10 +7,16 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func InitDB() *gorm.DB {
-	conn, err := gorm.Open("mysql", config.DatabaseURL)
+type DatabaseClient struct {
+	Client *gorm.DB
+}
+
+func NewDatabase() *DatabaseClient {
+	client, err := gorm.Open("mysql", config.DatabaseURL)
 	if err != nil {
 		panic(err)
 	}
-	return conn
+	return &DatabaseClient{
+		Client: client,
+	}
 }
