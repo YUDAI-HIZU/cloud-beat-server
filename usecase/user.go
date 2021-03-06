@@ -52,7 +52,6 @@ func (u userUseCase) Update(id int, input model.UpdateUserInput) (*models.User, 
 		WebURL:       *input.WebURL,
 		Introduction: *input.Introduction,
 	}
-
 	user, err := u.userRepository.Update(user)
 	if err != nil {
 		return nil, err

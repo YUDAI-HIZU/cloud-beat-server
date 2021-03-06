@@ -2,6 +2,7 @@ package models
 
 import (
 	"app/config"
+	"bytes"
 	"fmt"
 	"time"
 )
@@ -9,6 +10,7 @@ import (
 type Image struct {
 	ID        int
 	Name      string
+	Buf       *bytes.Buffer
 	OwnerID   int
 	OwnerType ImageOwnerType
 	CreatedAt time.Time
