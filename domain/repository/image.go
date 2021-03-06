@@ -6,6 +6,6 @@ import (
 )
 
 type ImageRepository interface {
-	Create(image *models.Image) (*models.Image, error)
+	Create(img *models.Image) (*models.Image, error)
 	Upload(id int, name string, input model.CreateImageInput) error
 }

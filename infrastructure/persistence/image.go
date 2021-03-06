@@ -25,11 +25,12 @@ func NewImagePersistence(db *gorm.DB, storage *storage.Client) repository.ImageR
 	}
 }
 
-func (i *imagePersistence) Create(image *models.Image) (*models.Image, error) {
-	if err := i.db.Create(image).Error; err != nil {
+func (i *imagePersistence) Create(img *models.Image) (*models.Image, error) {
+	if err := i.db.Model(img).Create(img).
+		Error; err != nil {
 		return nil, err
 	}
-	return image, nil
+	return img, nil
 }
 
 func (i *imagePersistence) Upload(id int, name string, input model.CreateImageInput) error {

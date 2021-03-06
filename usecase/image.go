@@ -23,20 +23,20 @@ func NewImageUseCase(i repository.ImageRepository) ImageUseCase {
 }
 
 func (i imageUseCase) Create(id int, input model.CreateImageInput) (*models.Image, error) {
-	image := &models.Image{
-		Name:      uuid.New().String(),
+	img := &models.Image{
+		Name:      uuid.New().String() + input.Image.Filename,
 		OwnerID:   id,
 		OwnerType: input.OwnerType,
 	}
 
-	image, err := i.imageRepository.Create(image)
+	img, err := i.imageRepository.Create(img)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := i.imageRepository.Upload(image.ID, image.Name, input); err != nil {
+	if err := i.imageRepository.Upload(img.ID, img.Name, input); err != nil {
 		return nil, err
 	}
 
-	return image, nil
+	return img, nil
 }
