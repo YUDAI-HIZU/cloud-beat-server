@@ -55,34 +55,33 @@ type ComplexityRoot struct {
 		UserID    func(childComplexity int) int
 	}
 
-	Image struct {
-		CreatedAt func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Name      func(childComplexity int) int
-		OwnerID   func(childComplexity int) int
-		OwnerType func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
-		Url       func(childComplexity int) int
-	}
-
 	Mutation struct {
-		CreateImage func(childComplexity int, input model.CreateImageInput) int
+		CreateTrack func(childComplexity int, input model.CreateTrackInput) int
 		CreateUser  func(childComplexity int, input model.CreateUserInput) int
-		UpdateImage func(childComplexity int, input model.UpdateImageInput) int
+		UpdateTrack func(childComplexity int, input model.UpdateTrackInput) int
 		UpdateUser  func(childComplexity int, input model.UpdateUserInput) int
 	}
 
 	Query struct {
 		CurrentUser func(childComplexity int) int
+		Track       func(childComplexity int, id int) int
 		User        func(childComplexity int, id int) int
 	}
 
+	Track struct {
+		CreatedAt    func(childComplexity int) int
+		ID           func(childComplexity int) int
+		ThumbnailUrl func(childComplexity int) int
+		Title        func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+	}
+
 	User struct {
-		Cover        func(childComplexity int) int
+		CoverUrl     func(childComplexity int) int
 		CreatedAt    func(childComplexity int) int
 		DisplayName  func(childComplexity int) int
 		ID           func(childComplexity int) int
-		Icon         func(childComplexity int) int
+		IconUrl      func(childComplexity int) int
 		Introduction func(childComplexity int) int
 		UID          func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
@@ -91,12 +90,13 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateImage(ctx context.Context, input model.CreateImageInput) (*models.Image, error)
+	CreateTrack(ctx context.Context, input model.CreateTrackInput) (*models.Track, error)
 	CreateUser(ctx context.Context, input model.CreateUserInput) (*models.User, error)
-	UpdateImage(ctx context.Context, input model.UpdateImageInput) (*models.Image, error)
+	UpdateTrack(ctx context.Context, input model.UpdateTrackInput) (*models.Track, error)
 	UpdateUser(ctx context.Context, input model.UpdateUserInput) (*models.User, error)
 }
 type QueryResolver interface {
+	Track(ctx context.Context, id int) (*models.Track, error)
 	User(ctx context.Context, id int) (*models.User, error)
 	CurrentUser(ctx context.Context) (*models.User, error)
 }
@@ -151,66 +151,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DeviceToken.UserID(childComplexity), true
 
-	case "Image.createdAt":
-		if e.complexity.Image.CreatedAt == nil {
+	case "Mutation.createTrack":
+		if e.complexity.Mutation.CreateTrack == nil {
 			break
 		}
 
-		return e.complexity.Image.CreatedAt(childComplexity), true
-
-	case "Image.id":
-		if e.complexity.Image.ID == nil {
-			break
-		}
-
-		return e.complexity.Image.ID(childComplexity), true
-
-	case "Image.name":
-		if e.complexity.Image.Name == nil {
-			break
-		}
-
-		return e.complexity.Image.Name(childComplexity), true
-
-	case "Image.ownerID":
-		if e.complexity.Image.OwnerID == nil {
-			break
-		}
-
-		return e.complexity.Image.OwnerID(childComplexity), true
-
-	case "Image.ownerType":
-		if e.complexity.Image.OwnerType == nil {
-			break
-		}
-
-		return e.complexity.Image.OwnerType(childComplexity), true
-
-	case "Image.updatedAt":
-		if e.complexity.Image.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.Image.UpdatedAt(childComplexity), true
-
-	case "Image.url":
-		if e.complexity.Image.Url == nil {
-			break
-		}
-
-		return e.complexity.Image.Url(childComplexity), true
-
-	case "Mutation.createImage":
-		if e.complexity.Mutation.CreateImage == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createImage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createTrack_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateImage(childComplexity, args["input"].(model.CreateImageInput)), true
+		return e.complexity.Mutation.CreateTrack(childComplexity, args["input"].(model.CreateTrackInput)), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -224,17 +175,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.CreateUserInput)), true
 
-	case "Mutation.updateImage":
-		if e.complexity.Mutation.UpdateImage == nil {
+	case "Mutation.updateTrack":
+		if e.complexity.Mutation.UpdateTrack == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateImage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateTrack_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateImage(childComplexity, args["input"].(model.UpdateImageInput)), true
+		return e.complexity.Mutation.UpdateTrack(childComplexity, args["input"].(model.UpdateTrackInput)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -255,6 +206,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.CurrentUser(childComplexity), true
 
+	case "Query.track":
+		if e.complexity.Query.Track == nil {
+			break
+		}
+
+		args, err := ec.field_Query_track_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Track(childComplexity, args["id"].(int)), true
+
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
@@ -267,12 +230,47 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["id"].(int)), true
 
-	case "User.cover":
-		if e.complexity.User.Cover == nil {
+	case "Track.createdAt":
+		if e.complexity.Track.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.User.Cover(childComplexity), true
+		return e.complexity.Track.CreatedAt(childComplexity), true
+
+	case "Track.id":
+		if e.complexity.Track.ID == nil {
+			break
+		}
+
+		return e.complexity.Track.ID(childComplexity), true
+
+	case "Track.thumbnailUrl":
+		if e.complexity.Track.ThumbnailUrl == nil {
+			break
+		}
+
+		return e.complexity.Track.ThumbnailUrl(childComplexity), true
+
+	case "Track.title":
+		if e.complexity.Track.Title == nil {
+			break
+		}
+
+		return e.complexity.Track.Title(childComplexity), true
+
+	case "Track.updatedAt":
+		if e.complexity.Track.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Track.UpdatedAt(childComplexity), true
+
+	case "User.coverUrl":
+		if e.complexity.User.CoverUrl == nil {
+			break
+		}
+
+		return e.complexity.User.CoverUrl(childComplexity), true
 
 	case "User.createdAt":
 		if e.complexity.User.CreatedAt == nil {
@@ -295,12 +293,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.ID(childComplexity), true
 
-	case "User.icon":
-		if e.complexity.User.Icon == nil {
+	case "User.iconUrl":
+		if e.complexity.User.IconUrl == nil {
 			break
 		}
 
-		return e.complexity.User.Icon(childComplexity), true
+		return e.complexity.User.IconUrl(childComplexity), true
 
 	case "User.introduction":
 		if e.complexity.User.Introduction == nil {
@@ -404,25 +402,18 @@ scalar Email
 
 directive @authentication on FIELD_DEFINITION
 
-type DeviceToken {
+type Track {
   id: ID!
-  userID: ID!
-  Token: String!
+  title: String!
+  thumbnailUrl: String
   createdAt: Time
   updatedAt: Time
 }
 
-enum ImageOwnerType {
-  USER_ICON,
-  USER_COVER
-}
-
-type Image {
+type DeviceToken {
   id: ID!
-  name: String!
-  ownerID: ID!
-  ownerType: ImageOwnerType!
-  url: String!
+  userID: ID!
+  Token: String!
   createdAt: Time
   updatedAt: Time
 }
@@ -433,20 +424,21 @@ type User {
   displayName: String!
   webUrl: String
   introduction: String
-  icon: Image
-  cover: Image
+  iconUrl: String
+  coverUrl: String
   createdAt: Time
   updatedAt: Time
 }
 
 type Query {
+  track(id: ID!): Track
   user(id: ID!): User
   currentUser: User! @authentication
 }
 
-input CreateImageInput {
-  image: Upload!
-  ownerType: ImageOwnerType!
+input CreateTrackInput {
+  title: String!
+  thumbnailImage: Upload
 }
 
 input CreateUserInput {
@@ -454,20 +446,23 @@ input CreateUserInput {
   displayName: String!
 }
 
-input UpdateImageInput {
-  image: Upload!
+input UpdateTrackInput {
+  title: String!
+  thumbnailImage: Upload
 }
 
 input UpdateUserInput {
+  iconImage: Upload
+  coverImage: Upload
   displayName: String
   webUrl: String
   introduction: String
 }
 
 type Mutation {
-  createImage(input: CreateImageInput!): Image! @authentication
+  createTrack(input: CreateTrackInput!): Track! @authentication
   createUser(input: CreateUserInput!): User!
-  updateImage(input: UpdateImageInput!): Image! @authentication
+  updateTrack(input: UpdateTrackInput!): Track! @authentication
   updateUser(input: UpdateUserInput!): User! @authentication
 }
 `, BuiltIn: false},
@@ -478,13 +473,13 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Mutation_createImage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createTrack_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.CreateImageInput
+	var arg0 model.CreateTrackInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateImageInput2appᚋgraphᚋmodelᚐCreateImageInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateTrackInput2appᚋgraphᚋmodelᚐCreateTrackInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -508,13 +503,13 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateImage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateTrack_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.UpdateImageInput
+	var arg0 model.UpdateTrackInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateImageInput2appᚋgraphᚋmodelᚐUpdateImageInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateTrackInput2appᚋgraphᚋmodelᚐUpdateTrackInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -550,6 +545,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_track_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -775,246 +785,7 @@ func (ec *executionContext) _DeviceToken_updatedAt(ctx context.Context, field gr
 	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Image_id(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Image",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Image_name(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Image",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Image_ownerID(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Image",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.OwnerID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Image_ownerType(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Image",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.OwnerType, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(models.ImageOwnerType)
-	fc.Result = res
-	return ec.marshalNImageOwnerType2appᚋdomainᚋmodelsᚐImageOwnerType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Image_url(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Image",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Url(), nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Image_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Image",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Image_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.Image) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Image",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_createImage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_createTrack(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1031,7 +802,7 @@ func (ec *executionContext) _Mutation_createImage(ctx context.Context, field gra
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_createImage_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_createTrack_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -1040,7 +811,7 @@ func (ec *executionContext) _Mutation_createImage(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CreateImage(rctx, args["input"].(model.CreateImageInput))
+			return ec.resolvers.Mutation().CreateTrack(rctx, args["input"].(model.CreateTrackInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authentication == nil {
@@ -1056,10 +827,10 @@ func (ec *executionContext) _Mutation_createImage(ctx context.Context, field gra
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*models.Image); ok {
+		if data, ok := tmp.(*models.Track); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *app/domain/models.Image`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *app/domain/models.Track`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1071,9 +842,9 @@ func (ec *executionContext) _Mutation_createImage(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Image)
+	res := resTmp.(*models.Track)
 	fc.Result = res
-	return ec.marshalNImage2ᚖappᚋdomainᚋmodelsᚐImage(ctx, field.Selections, res)
+	return ec.marshalNTrack2ᚖappᚋdomainᚋmodelsᚐTrack(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1118,7 +889,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	return ec.marshalNUser2ᚖappᚋdomainᚋmodelsᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_updateImage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_updateTrack(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1135,7 +906,7 @@ func (ec *executionContext) _Mutation_updateImage(ctx context.Context, field gra
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_updateImage_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_updateTrack_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -1144,7 +915,7 @@ func (ec *executionContext) _Mutation_updateImage(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().UpdateImage(rctx, args["input"].(model.UpdateImageInput))
+			return ec.resolvers.Mutation().UpdateTrack(rctx, args["input"].(model.UpdateTrackInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.Authentication == nil {
@@ -1160,10 +931,10 @@ func (ec *executionContext) _Mutation_updateImage(ctx context.Context, field gra
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*models.Image); ok {
+		if data, ok := tmp.(*models.Track); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *app/domain/models.Image`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *app/domain/models.Track`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1175,9 +946,9 @@ func (ec *executionContext) _Mutation_updateImage(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Image)
+	res := resTmp.(*models.Track)
 	fc.Result = res
-	return ec.marshalNImage2ᚖappᚋdomainᚋmodelsᚐImage(ctx, field.Selections, res)
+	return ec.marshalNTrack2ᚖappᚋdomainᚋmodelsᚐTrack(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1240,6 +1011,45 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 	res := resTmp.(*models.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚖappᚋdomainᚋmodelsᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_track(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_track_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Track(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Track)
+	fc.Result = res
+	return ec.marshalOTrack2ᚖappᚋdomainᚋmodelsᚐTrack(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1405,6 +1215,172 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	res := resTmp.(*introspection.Schema)
 	fc.Result = res
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Track_id(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Track",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Track_title(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Track",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Track_thumbnailUrl(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Track",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ThumbnailUrl(), nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Track_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Track",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Track_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Track",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
@@ -1576,7 +1552,7 @@ func (ec *executionContext) _User_introduction(ctx context.Context, field graphq
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_icon(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_iconUrl(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1587,14 +1563,14 @@ func (ec *executionContext) _User_icon(ctx context.Context, field graphql.Collec
 		Object:     "User",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
+		IsMethod:   true,
 		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Icon, nil
+		return obj.IconUrl(), nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1603,12 +1579,12 @@ func (ec *executionContext) _User_icon(ctx context.Context, field graphql.Collec
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*models.Image)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOImage2ᚖappᚋdomainᚋmodelsᚐImage(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_cover(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_coverUrl(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -1619,14 +1595,14 @@ func (ec *executionContext) _User_cover(ctx context.Context, field graphql.Colle
 		Object:     "User",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
+		IsMethod:   true,
 		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Cover, nil
+		return obj.CoverUrl(), nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1635,9 +1611,9 @@ func (ec *executionContext) _User_cover(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*models.Image)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOImage2ᚖappᚋdomainᚋmodelsᚐImage(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
@@ -2791,25 +2767,25 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreateImageInput(ctx context.Context, obj interface{}) (model.CreateImageInput, error) {
-	var it model.CreateImageInput
+func (ec *executionContext) unmarshalInputCreateTrackInput(ctx context.Context, obj interface{}) (model.CreateTrackInput, error) {
+	var it model.CreateTrackInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
-		case "image":
+		case "title":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
-			it.Image, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "ownerType":
+		case "thumbnailImage":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerType"))
-			it.OwnerType, err = ec.unmarshalNImageOwnerType2appᚋdomainᚋmodelsᚐImageOwnerType(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnailImage"))
+			it.ThumbnailImage, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2847,17 +2823,25 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateImageInput(ctx context.Context, obj interface{}) (model.UpdateImageInput, error) {
-	var it model.UpdateImageInput
+func (ec *executionContext) unmarshalInputUpdateTrackInput(ctx context.Context, obj interface{}) (model.UpdateTrackInput, error) {
+	var it model.UpdateTrackInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
-		case "image":
+		case "title":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image"))
-			it.Image, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "thumbnailImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnailImage"))
+			it.ThumbnailImage, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2873,6 +2857,22 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 
 	for k, v := range asMap {
 		switch k {
+		case "iconImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconImage"))
+			it.IconImage, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "coverImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coverImage"))
+			it.CoverImage, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "displayName":
 			var err error
 
@@ -2952,57 +2952,6 @@ func (ec *executionContext) _DeviceToken(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
-var imageImplementors = []string{"Image"}
-
-func (ec *executionContext) _Image(ctx context.Context, sel ast.SelectionSet, obj *models.Image) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, imageImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Image")
-		case "id":
-			out.Values[i] = ec._Image_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "name":
-			out.Values[i] = ec._Image_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "ownerID":
-			out.Values[i] = ec._Image_ownerID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "ownerType":
-			out.Values[i] = ec._Image_ownerType(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "url":
-			out.Values[i] = ec._Image_url(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "createdAt":
-			out.Values[i] = ec._Image_createdAt(ctx, field, obj)
-		case "updatedAt":
-			out.Values[i] = ec._Image_updatedAt(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -3018,8 +2967,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createImage":
-			out.Values[i] = ec._Mutation_createImage(ctx, field)
+		case "createTrack":
+			out.Values[i] = ec._Mutation_createTrack(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3028,8 +2977,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "updateImage":
-			out.Values[i] = ec._Mutation_updateImage(ctx, field)
+		case "updateTrack":
+			out.Values[i] = ec._Mutation_updateTrack(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3064,6 +3013,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "track":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_track(ctx, field)
+				return res
+			})
 		case "user":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -3093,6 +3053,44 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
 			out.Values[i] = ec._Query___schema(ctx, field)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var trackImplementors = []string{"Track"}
+
+func (ec *executionContext) _Track(ctx context.Context, sel ast.SelectionSet, obj *models.Track) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, trackImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Track")
+		case "id":
+			out.Values[i] = ec._Track_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "title":
+			out.Values[i] = ec._Track_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "thumbnailUrl":
+			out.Values[i] = ec._Track_thumbnailUrl(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Track_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Track_updatedAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3134,10 +3132,10 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_webUrl(ctx, field, obj)
 		case "introduction":
 			out.Values[i] = ec._User_introduction(ctx, field, obj)
-		case "icon":
-			out.Values[i] = ec._User_icon(ctx, field, obj)
-		case "cover":
-			out.Values[i] = ec._User_cover(ctx, field, obj)
+		case "iconUrl":
+			out.Values[i] = ec._User_iconUrl(ctx, field, obj)
+		case "coverUrl":
+			out.Values[i] = ec._User_coverUrl(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._User_createdAt(ctx, field, obj)
 		case "updatedAt":
@@ -3413,8 +3411,8 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNCreateImageInput2appᚋgraphᚋmodelᚐCreateImageInput(ctx context.Context, v interface{}) (model.CreateImageInput, error) {
-	res, err := ec.unmarshalInputCreateImageInput(ctx, v)
+func (ec *executionContext) unmarshalNCreateTrackInput2appᚋgraphᚋmodelᚐCreateTrackInput(ctx context.Context, v interface{}) (model.CreateTrackInput, error) {
+	res, err := ec.unmarshalInputCreateTrackInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -3453,36 +3451,6 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNImage2appᚋdomainᚋmodelsᚐImage(ctx context.Context, sel ast.SelectionSet, v models.Image) graphql.Marshaler {
-	return ec._Image(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNImage2ᚖappᚋdomainᚋmodelsᚐImage(ctx context.Context, sel ast.SelectionSet, v *models.Image) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._Image(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNImageOwnerType2appᚋdomainᚋmodelsᚐImageOwnerType(ctx context.Context, v interface{}) (models.ImageOwnerType, error) {
-	tmp, err := graphql.UnmarshalString(v)
-	res := models.ImageOwnerType(tmp)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNImageOwnerType2appᚋdomainᚋmodelsᚐImageOwnerType(ctx context.Context, sel ast.SelectionSet, v models.ImageOwnerType) graphql.Marshaler {
-	res := graphql.MarshalString(string(v))
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
-}
-
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3498,29 +3466,28 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNUpdateImageInput2appᚋgraphᚋmodelᚐUpdateImageInput(ctx context.Context, v interface{}) (model.UpdateImageInput, error) {
-	res, err := ec.unmarshalInputUpdateImageInput(ctx, v)
+func (ec *executionContext) marshalNTrack2appᚋdomainᚋmodelsᚐTrack(ctx context.Context, sel ast.SelectionSet, v models.Track) graphql.Marshaler {
+	return ec._Track(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTrack2ᚖappᚋdomainᚋmodelsᚐTrack(ctx context.Context, sel ast.SelectionSet, v *models.Track) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Track(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUpdateTrackInput2appᚋgraphᚋmodelᚐUpdateTrackInput(ctx context.Context, v interface{}) (model.UpdateTrackInput, error) {
+	res, err := ec.unmarshalInputUpdateTrackInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateUserInput2appᚋgraphᚋmodelᚐUpdateUserInput(ctx context.Context, v interface{}) (model.UpdateUserInput, error) {
 	res, err := ec.unmarshalInputUpdateUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (graphql.Upload, error) {
-	res, err := graphql.UnmarshalUpload(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v graphql.Upload) graphql.Marshaler {
-	res := graphql.MarshalUpload(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
 }
 
 func (ec *executionContext) marshalNUser2appᚋdomainᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v models.User) graphql.Marshaler {
@@ -3790,13 +3757,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) marshalOImage2ᚖappᚋdomainᚋmodelsᚐImage(ctx context.Context, sel ast.SelectionSet, v *models.Image) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Image(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3828,6 +3788,28 @@ func (ec *executionContext) unmarshalOTime2timeᚐTime(ctx context.Context, v in
 
 func (ec *executionContext) marshalOTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
 	return graphql.MarshalTime(v)
+}
+
+func (ec *executionContext) marshalOTrack2ᚖappᚋdomainᚋmodelsᚐTrack(ctx context.Context, sel ast.SelectionSet, v *models.Track) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Track(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (*graphql.Upload, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalUpload(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v *graphql.Upload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalUpload(*v)
 }
 
 func (ec *executionContext) marshalOUser2ᚖappᚋdomainᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v *models.User) graphql.Marshaler {

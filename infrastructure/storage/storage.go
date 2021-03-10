@@ -9,17 +9,11 @@ import (
 	"google.golang.org/api/option"
 )
 
-type storageClient struct {
-	Client *storage.Client
-}
-
-func NewStorageClient() *storageClient {
+func NewStorage() *storage.Client {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.GCSAccount)))
 	if err != nil {
 		log.Fatalf("error getting storage client: %v\n", err)
 	}
-	return &storageClient{
-		Client: client,
-	}
+	return client
 }

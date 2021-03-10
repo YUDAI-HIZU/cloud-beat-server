@@ -52,9 +52,10 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+  Track:
+    model: app/domain/models.Track
   User:
     model: app/domain/models.User
   DeviceToken:
     model: app/domain/models.DeviceToken
-  Image:
-    model: app/domain/models.Image
+

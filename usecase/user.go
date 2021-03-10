@@ -10,7 +10,8 @@ import (
 )
 
 type userUseCase struct {
-	userRepository repository.UserRepository
+	userRepository  repository.UserRepository
+	imageRepository repository.ImageRepository
 }
 
 type UserUseCase interface {
@@ -19,9 +20,13 @@ type UserUseCase interface {
 	GetByID(id int) (*models.User, error)
 }
 
-func NewUserUseCase(u repository.UserRepository) UserUseCase {
+func NewUserUseCase(
+	u repository.UserRepository,
+	i repository.ImageRepository,
+) UserUseCase {
 	return &userUseCase{
-		userRepository: u,
+		u,
+		i,
 	}
 }
 
@@ -46,26 +51,31 @@ func (u userUseCase) Create(input model.CreateUserInput) (*models.User, error) {
 }
 
 func (u userUseCase) Update(id int, input model.UpdateUserInput) (*models.User, error) {
+	var err error
 	user := &models.User{
 		ID:           id,
 		DisplayName:  *input.DisplayName,
 		WebURL:       *input.WebURL,
 		Introduction: *input.Introduction,
 	}
-	user, err := u.userRepository.Update(user)
-	if err != nil {
-		return nil, err
+
+	if input.IconImage != nil {
+		user.IconPath, err = u.imageRepository.Upload("icons", input.IconImage)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return user, nil
+	if input.CoverImage != nil {
+		user.CoverPath, err = u.imageRepository.Upload("covers", input.CoverImage)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return u.userRepository.Update(user)
 }
 
 func (u userUseCase) GetByID(id int) (*models.User, error) {
-	user, err := u.userRepository.GetByID(id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	return u.userRepository.GetByID(id)
 }
