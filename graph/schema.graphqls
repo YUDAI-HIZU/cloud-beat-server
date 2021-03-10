@@ -8,25 +8,18 @@ scalar Email
 
 directive @authentication on FIELD_DEFINITION
 
-type DeviceToken {
+type Track {
   id: ID!
-  userID: ID!
-  Token: String!
+  title: String!
+  thumbnailUrl: String
   createdAt: Time
   updatedAt: Time
 }
 
-enum ImageOwnerType {
-  USER_ICON,
-  USER_COVER
-}
-
-type Image {
+type DeviceToken {
   id: ID!
-  name: String!
-  ownerID: ID!
-  ownerType: ImageOwnerType!
-  url: String!
+  userID: ID!
+  Token: String!
   createdAt: Time
   updatedAt: Time
 }
@@ -37,20 +30,21 @@ type User {
   displayName: String!
   webUrl: String
   introduction: String
-  icon: Image
-  cover: Image
+  iconUrl: String
+  coverUrl: String
   createdAt: Time
   updatedAt: Time
 }
 
 type Query {
+  track(id: ID!): Track
   user(id: ID!): User
   currentUser: User! @authentication
 }
 
-input CreateImageInput {
-  image: Upload!
-  ownerType: ImageOwnerType!
+input CreateTrackInput {
+  title: String!
+  thumbnailImage: Upload
 }
 
 input CreateUserInput {
@@ -58,19 +52,22 @@ input CreateUserInput {
   displayName: String!
 }
 
-input UpdateImageInput {
-  image: Upload!
+input UpdateTrackInput {
+  title: String!
+  thumbnailImage: Upload
 }
 
 input UpdateUserInput {
+  iconImage: Upload
+  coverImage: Upload
   displayName: String
   webUrl: String
   introduction: String
 }
 
 type Mutation {
-  createImage(input: CreateImageInput!): Image! @authentication
+  createTrack(input: CreateTrackInput!): Track! @authentication
   createUser(input: CreateUserInput!): User!
-  updateImage(input: UpdateImageInput!): Image! @authentication
+  updateTrack(input: UpdateTrackInput!): Track! @authentication
   updateUser(input: UpdateUserInput!): User! @authentication
 }

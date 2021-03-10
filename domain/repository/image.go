@@ -1,11 +1,7 @@
 package repository
 
-import (
-	"app/domain/models"
-	"app/graph/model"
-)
+import "github.com/99designs/gqlgen/graphql"
 
 type ImageRepository interface {
-	Create(img *models.Image) (*models.Image, error)
-	Upload(id int, name string, input model.CreateImageInput) error
+	Upload(prefix string, img *graphql.Upload) (string, error)
 }

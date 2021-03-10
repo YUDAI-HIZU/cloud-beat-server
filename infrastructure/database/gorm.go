@@ -7,16 +7,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type DatabaseClient struct {
-	Client *gorm.DB
-}
-
-func NewDatabase() *DatabaseClient {
-	client, err := gorm.Open("mysql", config.DatabaseURL)
+func NewDatabase() *gorm.DB {
+	db, err := gorm.Open("mysql", config.DatabaseURL)
 	if err != nil {
 		panic(err)
 	}
-	return &DatabaseClient{
-		Client: client,
-	}
+	return db
 }

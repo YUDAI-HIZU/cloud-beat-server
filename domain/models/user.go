@@ -1,6 +1,8 @@
 package models
 
 import (
+	"app/config"
+	"fmt"
 	"time"
 )
 
@@ -10,8 +12,22 @@ type User struct {
 	DisplayName  string
 	WebURL       string
 	Introduction string
-	Icon         *Image `gorm:"foreignkey:OwnerID"`
-	Cover        *Image `gorm:"foreignkey:OwnerID"`
+	IconPath     string
+	CoverPath    string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+}
+
+func (u *User) IconUrl() string {
+	if u.IconPath == "" {
+		return ""
+	}
+	return fmt.Sprintf("%s/%s", config.AssetEndpoint, u.IconPath)
+}
+
+func (u *User) CoverUrl() string {
+	if u.CoverPath == "" {
+		return ""
+	}
+	return fmt.Sprintf("%s/%s", config.AssetEndpoint, u.CoverPath)
 }
