@@ -10,6 +10,7 @@ type Track struct {
 	ID            int
 	Title         string
 	ThumbnailPath string
+	SoundPath     string
 	UserID        int
 	User          *User
 	CreatedAt     time.Time
@@ -21,4 +22,8 @@ func (t *Track) ThumbnailUrl() string {
 		return ""
 	}
 	return fmt.Sprintf("%s/%s", config.AssetEndpoint, t.ThumbnailPath)
+}
+
+func (t *Track) SoundUrl() string {
+	return fmt.Sprintf("%s/%s", config.AssetEndpoint, t.SoundPath)
 }

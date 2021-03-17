@@ -12,6 +12,9 @@ type Track {
   id: ID!
   title: String!
   thumbnailUrl: String
+  soundUrl: String!
+  userID: ID!
+  user: User!
   createdAt: Time
   updatedAt: Time
 }
@@ -29,6 +32,11 @@ type User {
   uid: String!
   displayName: String!
   webUrl: String
+  twitter: String
+  soundCloud: String
+  facebook: String
+  youtube: String
+  instagram: String
   introduction: String
   iconUrl: String
   coverUrl: String
@@ -38,13 +46,15 @@ type User {
 
 type Query {
   track(id: ID!): Track
+  tracks: [Track!]!
   user(id: ID!): User
   currentUser: User! @authentication
 }
 
 input CreateTrackInput {
   title: String!
-  thumbnailImage: Upload
+  sound: Upload!
+  thumbnail: Upload
 }
 
 input CreateUserInput {
@@ -54,14 +64,20 @@ input CreateUserInput {
 
 input UpdateTrackInput {
   title: String!
-  thumbnailImage: Upload
+  sound: Upload
+  thumbnail: Upload
 }
 
 input UpdateUserInput {
-  iconImage: Upload
-  coverImage: Upload
+  icon: Upload
+  cover: Upload
   displayName: String
   webUrl: String
+  twitter: String
+  soundCloud: String
+  facebook: String
+  youtube: String
+  instagram: String
   introduction: String
 }
 

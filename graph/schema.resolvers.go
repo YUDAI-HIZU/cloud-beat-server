@@ -34,6 +34,10 @@ func (r *queryResolver) Track(ctx context.Context, id int) (*models.Track, error
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *queryResolver) Tracks(ctx context.Context) ([]*models.Track, error) {
+	return r.track.List()
+}
+
 func (r *queryResolver) User(ctx context.Context, id int) (*models.User, error) {
 	return r.user.GetByID(id)
 }

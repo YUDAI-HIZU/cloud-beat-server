@@ -65,27 +65,36 @@ type ComplexityRoot struct {
 	Query struct {
 		CurrentUser func(childComplexity int) int
 		Track       func(childComplexity int, id int) int
+		Tracks      func(childComplexity int) int
 		User        func(childComplexity int, id int) int
 	}
 
 	Track struct {
 		CreatedAt    func(childComplexity int) int
 		ID           func(childComplexity int) int
+		SoundUrl     func(childComplexity int) int
 		ThumbnailUrl func(childComplexity int) int
 		Title        func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
+		User         func(childComplexity int) int
+		UserID       func(childComplexity int) int
 	}
 
 	User struct {
 		CoverUrl     func(childComplexity int) int
 		CreatedAt    func(childComplexity int) int
 		DisplayName  func(childComplexity int) int
+		Facebook     func(childComplexity int) int
 		ID           func(childComplexity int) int
 		IconUrl      func(childComplexity int) int
+		Instagram    func(childComplexity int) int
 		Introduction func(childComplexity int) int
+		SoundCloud   func(childComplexity int) int
+		Twitter      func(childComplexity int) int
 		UID          func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
 		WebURL       func(childComplexity int) int
+		Youtube      func(childComplexity int) int
 	}
 }
 
@@ -97,6 +106,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Track(ctx context.Context, id int) (*models.Track, error)
+	Tracks(ctx context.Context) ([]*models.Track, error)
 	User(ctx context.Context, id int) (*models.User, error)
 	CurrentUser(ctx context.Context) (*models.User, error)
 }
@@ -218,6 +228,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Track(childComplexity, args["id"].(int)), true
 
+	case "Query.tracks":
+		if e.complexity.Query.Tracks == nil {
+			break
+		}
+
+		return e.complexity.Query.Tracks(childComplexity), true
+
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
@@ -244,6 +261,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Track.ID(childComplexity), true
 
+	case "Track.soundUrl":
+		if e.complexity.Track.SoundUrl == nil {
+			break
+		}
+
+		return e.complexity.Track.SoundUrl(childComplexity), true
+
 	case "Track.thumbnailUrl":
 		if e.complexity.Track.ThumbnailUrl == nil {
 			break
@@ -264,6 +288,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Track.UpdatedAt(childComplexity), true
+
+	case "Track.user":
+		if e.complexity.Track.User == nil {
+			break
+		}
+
+		return e.complexity.Track.User(childComplexity), true
+
+	case "Track.userID":
+		if e.complexity.Track.UserID == nil {
+			break
+		}
+
+		return e.complexity.Track.UserID(childComplexity), true
 
 	case "User.coverUrl":
 		if e.complexity.User.CoverUrl == nil {
@@ -286,6 +324,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.DisplayName(childComplexity), true
 
+	case "User.facebook":
+		if e.complexity.User.Facebook == nil {
+			break
+		}
+
+		return e.complexity.User.Facebook(childComplexity), true
+
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
@@ -300,12 +345,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.IconUrl(childComplexity), true
 
+	case "User.instagram":
+		if e.complexity.User.Instagram == nil {
+			break
+		}
+
+		return e.complexity.User.Instagram(childComplexity), true
+
 	case "User.introduction":
 		if e.complexity.User.Introduction == nil {
 			break
 		}
 
 		return e.complexity.User.Introduction(childComplexity), true
+
+	case "User.soundCloud":
+		if e.complexity.User.SoundCloud == nil {
+			break
+		}
+
+		return e.complexity.User.SoundCloud(childComplexity), true
+
+	case "User.twitter":
+		if e.complexity.User.Twitter == nil {
+			break
+		}
+
+		return e.complexity.User.Twitter(childComplexity), true
 
 	case "User.uid":
 		if e.complexity.User.UID == nil {
@@ -327,6 +393,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.WebURL(childComplexity), true
+
+	case "User.youtube":
+		if e.complexity.User.Youtube == nil {
+			break
+		}
+
+		return e.complexity.User.Youtube(childComplexity), true
 
 	}
 	return 0, false
@@ -406,6 +479,9 @@ type Track {
   id: ID!
   title: String!
   thumbnailUrl: String
+  soundUrl: String!
+  userID: ID!
+  user: User!
   createdAt: Time
   updatedAt: Time
 }
@@ -423,6 +499,11 @@ type User {
   uid: String!
   displayName: String!
   webUrl: String
+  twitter: String
+  soundCloud: String
+  facebook: String
+  youtube: String
+  instagram: String
   introduction: String
   iconUrl: String
   coverUrl: String
@@ -432,13 +513,15 @@ type User {
 
 type Query {
   track(id: ID!): Track
+  tracks: [Track!]!
   user(id: ID!): User
   currentUser: User! @authentication
 }
 
 input CreateTrackInput {
   title: String!
-  thumbnailImage: Upload
+  sound: Upload!
+  thumbnail: Upload
 }
 
 input CreateUserInput {
@@ -448,14 +531,20 @@ input CreateUserInput {
 
 input UpdateTrackInput {
   title: String!
-  thumbnailImage: Upload
+  sound: Upload
+  thumbnail: Upload
 }
 
 input UpdateUserInput {
-  iconImage: Upload
-  coverImage: Upload
+  icon: Upload
+  cover: Upload
   displayName: String
   webUrl: String
+  twitter: String
+  soundCloud: String
+  facebook: String
+  youtube: String
+  instagram: String
   introduction: String
 }
 
@@ -1052,6 +1141,41 @@ func (ec *executionContext) _Query_track(ctx context.Context, field graphql.Coll
 	return ec.marshalOTrack2ᚖappᚋdomainᚋmodelsᚐTrack(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_tracks(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Tracks(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Track)
+	fc.Result = res
+	return ec.marshalNTrack2ᚕᚖappᚋdomainᚋmodelsᚐTrackᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1319,6 +1443,111 @@ func (ec *executionContext) _Track_thumbnailUrl(ctx context.Context, field graph
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Track_soundUrl(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Track",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SoundUrl(), nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Track_userID(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Track",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Track_user(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Track",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖappᚋdomainᚋmodelsᚐUser(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Track_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1507,6 +1736,166 @@ func (ec *executionContext) _User_webUrl(ctx context.Context, field graphql.Coll
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.WebURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_twitter(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Twitter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_soundCloud(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SoundCloud, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_facebook(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Facebook, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_youtube(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Youtube, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_instagram(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Instagram, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2781,11 +3170,19 @@ func (ec *executionContext) unmarshalInputCreateTrackInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "thumbnailImage":
+		case "sound":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnailImage"))
-			it.ThumbnailImage, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sound"))
+			it.Sound, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "thumbnail":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnail"))
+			it.Thumbnail, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2837,11 +3234,19 @@ func (ec *executionContext) unmarshalInputUpdateTrackInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "thumbnailImage":
+		case "sound":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnailImage"))
-			it.ThumbnailImage, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sound"))
+			it.Sound, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "thumbnail":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnail"))
+			it.Thumbnail, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2857,19 +3262,19 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 
 	for k, v := range asMap {
 		switch k {
-		case "iconImage":
+		case "icon":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconImage"))
-			it.IconImage, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			it.Icon, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "coverImage":
+		case "cover":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coverImage"))
-			it.CoverImage, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cover"))
+			it.Cover, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2886,6 +3291,46 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("webUrl"))
 			it.WebURL, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "twitter":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("twitter"))
+			it.Twitter, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "soundCloud":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("soundCloud"))
+			it.SoundCloud, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "facebook":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("facebook"))
+			it.Facebook, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "youtube":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("youtube"))
+			it.Youtube, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "instagram":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("instagram"))
+			it.Instagram, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3024,6 +3469,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_track(ctx, field)
 				return res
 			})
+		case "tracks":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_tracks(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "user":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -3087,6 +3546,21 @@ func (ec *executionContext) _Track(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "thumbnailUrl":
 			out.Values[i] = ec._Track_thumbnailUrl(ctx, field, obj)
+		case "soundUrl":
+			out.Values[i] = ec._Track_soundUrl(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "userID":
+			out.Values[i] = ec._Track_userID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+			out.Values[i] = ec._Track_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "createdAt":
 			out.Values[i] = ec._Track_createdAt(ctx, field, obj)
 		case "updatedAt":
@@ -3130,6 +3604,16 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "webUrl":
 			out.Values[i] = ec._User_webUrl(ctx, field, obj)
+		case "twitter":
+			out.Values[i] = ec._User_twitter(ctx, field, obj)
+		case "soundCloud":
+			out.Values[i] = ec._User_soundCloud(ctx, field, obj)
+		case "facebook":
+			out.Values[i] = ec._User_facebook(ctx, field, obj)
+		case "youtube":
+			out.Values[i] = ec._User_youtube(ctx, field, obj)
+		case "instagram":
+			out.Values[i] = ec._User_instagram(ctx, field, obj)
 		case "introduction":
 			out.Values[i] = ec._User_introduction(ctx, field, obj)
 		case "iconUrl":
@@ -3470,6 +3954,43 @@ func (ec *executionContext) marshalNTrack2appᚋdomainᚋmodelsᚐTrack(ctx cont
 	return ec._Track(ctx, sel, &v)
 }
 
+func (ec *executionContext) marshalNTrack2ᚕᚖappᚋdomainᚋmodelsᚐTrackᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.Track) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTrack2ᚖappᚋdomainᚋmodelsᚐTrack(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
 func (ec *executionContext) marshalNTrack2ᚖappᚋdomainᚋmodelsᚐTrack(ctx context.Context, sel ast.SelectionSet, v *models.Track) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -3488,6 +4009,21 @@ func (ec *executionContext) unmarshalNUpdateTrackInput2appᚋgraphᚋmodelᚐUpd
 func (ec *executionContext) unmarshalNUpdateUserInput2appᚋgraphᚋmodelᚐUpdateUserInput(ctx context.Context, v interface{}) (model.UpdateUserInput, error) {
 	res, err := ec.unmarshalInputUpdateUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (graphql.Upload, error) {
+	res, err := graphql.UnmarshalUpload(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v graphql.Upload) graphql.Marshaler {
+	res := graphql.MarshalUpload(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNUser2appᚋdomainᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v models.User) graphql.Marshaler {

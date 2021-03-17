@@ -55,19 +55,24 @@ func (u userUseCase) Update(id int, input model.UpdateUserInput) (*models.User, 
 	user := &models.User{
 		ID:           id,
 		DisplayName:  *input.DisplayName,
+		Twitter:      *input.Twitter,
+		SoundCloud:   *input.SoundCloud,
+		Facebook:     *input.Facebook,
+		Youtube:      *input.Youtube,
+		Instagram:    *input.Instagram,
 		WebURL:       *input.WebURL,
 		Introduction: *input.Introduction,
 	}
 
-	if input.IconImage != nil {
-		user.IconPath, err = u.imageRepository.Upload("icons", input.IconImage)
+	if input.Icon != nil {
+		user.IconPath, err = u.imageRepository.Upload("icons", input.Icon)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if input.CoverImage != nil {
-		user.CoverPath, err = u.imageRepository.Upload("covers", input.CoverImage)
+	if input.Cover != nil {
+		user.CoverPath, err = u.imageRepository.Upload("covers", input.Cover)
 		if err != nil {
 			return nil, err
 		}

@@ -14,8 +14,15 @@ func main() {
 	db := database.NewDatabase()
 	storage := storage.NewStorage()
 
-	user := usecase.NewUserUseCase(persistence.NewUserPersistence(db), persistence.NewImagePersistence(storage))
-	track := usecase.NewTrackUseCase(persistence.NewTrackPersistence(db), persistence.NewImagePersistence(storage))
+	user := usecase.NewUserUseCase(
+		persistence.NewUserPersistence(db),
+		persistence.NewImagePersistence(storage),
+	)
+	track := usecase.NewTrackUseCase(
+		persistence.NewTrackPersistence(db),
+		persistence.NewImagePersistence(storage),
+		persistence.NewAudioPersistence(storage),
+	)
 
 	resolver := graph.NewResolver(user, track)
 

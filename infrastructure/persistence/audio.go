@@ -12,21 +12,21 @@ import (
 	"github.com/google/uuid"
 )
 
-type imagePersistence struct {
+type audioPersistence struct {
 	storage *storage.Client
 }
 
-func NewImagePersistence(storage *storage.Client) repository.ImageRepository {
-	return &imagePersistence{
+func NewAudioPersistence(storage *storage.Client) repository.AudioRepository {
+	return &audioPersistence{
 		storage: storage,
 	}
 }
 
-func (p *imagePersistence) Upload(prefix string, img *graphql.Upload) (string, error) {
+func (p *audioPersistence) Upload(prefix string, audio *graphql.Upload) (string, error) {
 	path := fmt.Sprintf("%s/%s/%s", config.ENV, prefix, uuid.New().String())
 	sw := p.storage.Bucket(config.BucketName).Object(path).NewWriter(context.Background())
-	sw.ContentType = img.ContentType
-	if _, err := io.Copy(sw, img.File); err != nil {
+	sw.ContentType = audio.ContentType
+	if _, err := io.Copy(sw, audio.File); err != nil {
 		return "", err
 	}
 	if err := sw.Close(); err != nil {
