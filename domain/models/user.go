@@ -11,6 +11,11 @@ type User struct {
 	UID          string
 	DisplayName  string
 	WebURL       string
+	Twitter      string
+	SoundCloud   string
+	Facebook     string
+	Youtube      string
+	Instagram    string
 	Introduction string
 	IconPath     string
 	CoverPath    string

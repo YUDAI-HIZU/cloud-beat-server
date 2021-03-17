@@ -7,8 +7,9 @@ import (
 )
 
 type CreateTrackInput struct {
-	Title          string          `json:"title"`
-	ThumbnailImage *graphql.Upload `json:"thumbnailImage"`
+	Title     string          `json:"title"`
+	Sound     graphql.Upload  `json:"sound"`
+	Thumbnail *graphql.Upload `json:"thumbnail"`
 }
 
 type CreateUserInput struct {
@@ -17,14 +18,20 @@ type CreateUserInput struct {
 }
 
 type UpdateTrackInput struct {
-	Title          string          `json:"title"`
-	ThumbnailImage *graphql.Upload `json:"thumbnailImage"`
+	Title     string          `json:"title"`
+	Sound     *graphql.Upload `json:"sound"`
+	Thumbnail *graphql.Upload `json:"thumbnail"`
 }
 
 type UpdateUserInput struct {
-	IconImage    *graphql.Upload `json:"iconImage"`
-	CoverImage   *graphql.Upload `json:"coverImage"`
+	Icon         *graphql.Upload `json:"icon"`
+	Cover        *graphql.Upload `json:"cover"`
 	DisplayName  *string         `json:"displayName"`
 	WebURL       *string         `json:"webUrl"`
+	Twitter      *string         `json:"twitter"`
+	SoundCloud   *string         `json:"soundCloud"`
+	Facebook     *string         `json:"facebook"`
+	Youtube      *string         `json:"youtube"`
+	Instagram    *string         `json:"instagram"`
 	Introduction *string         `json:"introduction"`
 }

@@ -17,6 +17,16 @@ func NewTrackPersistence(db *gorm.DB) repository.TrackRepository {
 	}
 }
 
+func (p *trackPersistence) List() ([]*models.Track, error) {
+	tracks := make([]*models.Track, 0)
+
+	if err := p.db.Preload("User").Find(&tracks).Error; err != nil {
+
+		return nil, err
+	}
+	return tracks, nil
+}
+
 func (p *trackPersistence) Create(track *models.Track) (*models.Track, error) {
 	if err := p.db.Model(track).Create(track).Error; err != nil {
 		return nil, err
