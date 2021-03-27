@@ -18,7 +18,7 @@ type imagePersistence struct {
 
 func NewImagePersistence(storage *storage.Client) repository.ImageRepository {
 	return &imagePersistence{
-		storage: storage,
+		storage,
 	}
 }
 

@@ -7,15 +7,24 @@ import "app/usecase"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	user  usecase.UserUseCase
-	track usecase.TrackUseCase
+	genre          usecase.GenreUsecase
+	playlist       usecase.PlaylistUsecase
+	playlistSource usecase.PlaylistSourceUsecase
+	user           usecase.UserUsecase
+	track          usecase.TrackUsecase
 }
 
 func NewResolver(
-	user usecase.UserUseCase,
-	track usecase.TrackUseCase,
+	genre usecase.GenreUsecase,
+	playlist usecase.PlaylistUsecase,
+	playlistSource usecase.PlaylistSourceUsecase,
+	user usecase.UserUsecase,
+	track usecase.TrackUsecase,
 ) *Resolver {
 	return &Resolver{
+		genre,
+		playlist,
+		playlistSource,
 		user,
 		track,
 	}

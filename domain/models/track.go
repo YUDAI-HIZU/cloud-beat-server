@@ -13,6 +13,7 @@ type Track struct {
 	SoundPath     string
 	UserID        int
 	User          *User
+	Genres        []*Genre
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }

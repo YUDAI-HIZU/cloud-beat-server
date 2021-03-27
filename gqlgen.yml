@@ -52,6 +52,10 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
+  Genre:
+    model: app/domain/models.Genre
+  Playlist:
+    model: app/domain/models.Playlist
   Track:
     model: app/domain/models.Track
   User:

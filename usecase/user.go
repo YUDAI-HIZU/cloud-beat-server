@@ -9,28 +9,32 @@ import (
 	"log"
 )
 
-type userUseCase struct {
+type userUsecase struct {
 	userRepository  repository.UserRepository
 	imageRepository repository.ImageRepository
 }
 
-type UserUseCase interface {
+type UserUsecase interface {
+	Get(id int) (*models.User, error)
 	Create(input model.CreateUserInput) (*models.User, error)
 	Update(id int, input model.UpdateUserInput) (*models.User, error)
-	GetByID(id int) (*models.User, error)
 }
 
-func NewUserUseCase(
+func NewUserUsecase(
 	u repository.UserRepository,
 	i repository.ImageRepository,
-) UserUseCase {
-	return &userUseCase{
+) UserUsecase {
+	return &userUsecase{
 		u,
 		i,
 	}
 }
 
-func (u userUseCase) Create(input model.CreateUserInput) (*models.User, error) {
+func (u *userUsecase) Get(id int) (*models.User, error) {
+	return u.userRepository.Get(id)
+}
+
+func (u *userUsecase) Create(input model.CreateUserInput) (*models.User, error) {
 	user := &models.User{
 		UID:         input.UID,
 		DisplayName: input.DisplayName,
@@ -50,7 +54,7 @@ func (u userUseCase) Create(input model.CreateUserInput) (*models.User, error) {
 	return user, nil
 }
 
-func (u userUseCase) Update(id int, input model.UpdateUserInput) (*models.User, error) {
+func (u *userUsecase) Update(id int, input model.UpdateUserInput) (*models.User, error) {
 	var err error
 	user := &models.User{
 		ID:           id,
@@ -79,8 +83,4 @@ func (u userUseCase) Update(id int, input model.UpdateUserInput) (*models.User, 
 	}
 
 	return u.userRepository.Update(user)
-}
-
-func (u userUseCase) GetByID(id int) (*models.User, error) {
-	return u.userRepository.GetByID(id)
 }

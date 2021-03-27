@@ -4,9 +4,31 @@
 
 scalar Time
 scalar Upload
-scalar Email
 
 directive @authentication on FIELD_DEFINITION
+
+type Genre {
+  id: ID!
+  name: String!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type Playlist {
+  id: ID!
+  title: String!
+  public: Boolean!
+  userID: ID!
+  user: User!
+  tracks: [Track!]!
+  createdAt: Time!
+  updatedAt: Time!
+}
+
+type PlaylistSource {
+  playlistID: ID!
+  trackID: ID!
+}
 
 type Track {
   id: ID!
@@ -15,16 +37,17 @@ type Track {
   soundUrl: String!
   userID: ID!
   user: User!
-  createdAt: Time
-  updatedAt: Time
+  genres: [Genre!]!
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type DeviceToken {
   id: ID!
   userID: ID!
   Token: String!
-  createdAt: Time
-  updatedAt: Time
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type User {
@@ -40,15 +63,31 @@ type User {
   introduction: String
   iconUrl: String
   coverUrl: String
-  createdAt: Time
-  updatedAt: Time
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type Query {
-  track(id: ID!): Track
-  tracks: [Track!]!
-  user(id: ID!): User
-  currentUser: User! @authentication
+  genres: [Genre!]!
+  playlistsByUser(userID: ID!): [Playlist!]!
+  playlistsByMe: [Playlist!]! @authentication
+  track(id: ID!): Track!
+  tracksByUser(userID: ID!): [Track!]!
+  newReleaseTracks: [Track!]!
+  pickUpTracks: [Track!]!
+  user(id: ID!): User!
+  me: User! @authentication
+}
+
+input CreatePlaylistInput {
+  title: String!
+  public: Boolean!
+  trackIDs: [ID!]
+}
+
+input CreatePlaylistSourceInput {
+  playlistID: ID!
+  trackID: ID!
 }
 
 input CreateTrackInput {
@@ -81,9 +120,22 @@ input UpdateUserInput {
   introduction: String
 }
 
+input DeletePlaylistInput {
+  id: ID!
+}
+
+input DeletePlaylistSourceInput {
+  playlistID: ID!
+  trackIDs: [ID!]!
+}
+
 type Mutation {
+  createPlaylist(input: CreatePlaylistInput!): Playlist!
+  createPlaylistSource(input: CreatePlaylistSourceInput!): PlaylistSource!
   createTrack(input: CreateTrackInput!): Track! @authentication
   createUser(input: CreateUserInput!): User!
   updateTrack(input: UpdateTrackInput!): Track! @authentication
   updateUser(input: UpdateUserInput!): User! @authentication
+  deletePlaylist(input: DeletePlaylistInput!): Playlist!
+  deletePlaylistSource(input: DeletePlaylistSourceInput!): [PlaylistSource!]!
 }

@@ -18,7 +18,7 @@ type audioPersistence struct {
 
 func NewAudioPersistence(storage *storage.Client) repository.AudioRepository {
 	return &audioPersistence{
-		storage: storage,
+		storage,
 	}
 }
 
