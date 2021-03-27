@@ -5,7 +5,7 @@ import (
 )
 
 type UserRepository interface {
+	Get(id int) (*models.User, error)
 	Create(user *models.User) (*models.User, error)
 	Update(user *models.User) (*models.User, error)
-	GetByID(id int) (*models.User, error)
 }

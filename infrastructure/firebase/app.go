@@ -19,6 +19,6 @@ func NewFirebaseApp(ctx context.Context) firebaseApp {
 		log.Fatalf("error initializing app: %v\n", err)
 	}
 	return firebaseApp{
-		App: app,
+		app,
 	}
 }

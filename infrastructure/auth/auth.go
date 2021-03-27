@@ -19,7 +19,7 @@ func NewAuthClient(ctx context.Context) authClient {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 	return authClient{
-		Client: client,
+		client,
 	}
 }
 

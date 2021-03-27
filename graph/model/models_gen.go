@@ -6,6 +6,17 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+type CreatePlaylistInput struct {
+	Title    string `json:"title"`
+	Public   bool   `json:"public"`
+	TrackIDs []int  `json:"trackIDs"`
+}
+
+type CreatePlaylistSourceInput struct {
+	PlaylistID int `json:"playlistID"`
+	TrackID    int `json:"trackID"`
+}
+
 type CreateTrackInput struct {
 	Title     string          `json:"title"`
 	Sound     graphql.Upload  `json:"sound"`
@@ -15,6 +26,15 @@ type CreateTrackInput struct {
 type CreateUserInput struct {
 	UID         string `json:"uid"`
 	DisplayName string `json:"displayName"`
+}
+
+type DeletePlaylistInput struct {
+	ID int `json:"id"`
+}
+
+type DeletePlaylistSourceInput struct {
+	PlaylistID int   `json:"playlistID"`
+	TrackIDs   []int `json:"trackIDs"`
 }
 
 type UpdateTrackInput struct {

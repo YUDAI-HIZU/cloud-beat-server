@@ -14,17 +14,26 @@ func main() {
 	db := database.NewDatabase()
 	storage := storage.NewStorage()
 
-	user := usecase.NewUserUseCase(
+	genre := usecase.NewGenreUsecase(
+		persistence.NewGenrePersistence(db),
+	)
+	playlist := usecase.NewPlaylistUsecase(
+		persistence.NewPlaylistPersistence(db),
+	)
+	playlistSource := usecase.NewPlaylistSourceUsecase(
+		persistence.NewPlaylistSourcePersistence(db),
+	)
+	user := usecase.NewUserUsecase(
 		persistence.NewUserPersistence(db),
 		persistence.NewImagePersistence(storage),
 	)
-	track := usecase.NewTrackUseCase(
+	track := usecase.NewTrackUsecase(
 		persistence.NewTrackPersistence(db),
 		persistence.NewImagePersistence(storage),
 		persistence.NewAudioPersistence(storage),
 	)
 
-	resolver := graph.NewResolver(user, track)
+	resolver := graph.NewResolver(genre, playlist, playlistSource, user, track)
 
 	h := handler.NewGraphQLHandler(resolver)
 	p := handler.NewPlayGroundHandler()
