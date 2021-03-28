@@ -18,8 +18,8 @@ func NewUserPersistence(db *gorm.DB) repository.UserRepository {
 }
 
 func (p *userPersistence) Get(id int) (*models.User, error) {
-	var user *models.User
-	if err := p.db.Take(user).Error; err != nil {
+	user := &models.User{}
+	if err := p.db.First(user, id).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, err
 		}

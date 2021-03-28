@@ -59,11 +59,6 @@ func (u *userUsecase) Update(id int, input model.UpdateUserInput) (*models.User,
 	user := &models.User{
 		ID:           id,
 		DisplayName:  *input.DisplayName,
-		Twitter:      *input.Twitter,
-		SoundCloud:   *input.SoundCloud,
-		Facebook:     *input.Facebook,
-		Youtube:      *input.Youtube,
-		Instagram:    *input.Instagram,
 		WebURL:       *input.WebURL,
 		Introduction: *input.Introduction,
 	}
