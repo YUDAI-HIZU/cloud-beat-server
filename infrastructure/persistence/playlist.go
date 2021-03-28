@@ -17,6 +17,14 @@ func NewPlaylistPersistence(db *gorm.DB) repository.PlaylistRepository {
 	}
 }
 
+func (p *playlistPersistence) Get(id int) (*models.Playlist, error) {
+	playlist := &models.Playlist{}
+	if err := p.db.Preload("Tracks").Preload("User").First(playlist, id).Error; err != nil {
+		return nil, err
+	}
+	return playlist, nil
+}
+
 func (p *playlistPersistence) ListByUserID(userID int) ([]*models.Playlist, error) {
 	playlists := make([]*models.Playlist, 0)
 	if err := p.db.Preload("Tracks").Preload("User").Where("user_id = ?", userID).Find(&playlists).Error; err != nil {

@@ -14,6 +14,9 @@ func main() {
 	db := database.NewDatabase()
 	storage := storage.NewStorage()
 
+	externalLink := usecase.NewExternalLinkUsecase(
+		persistence.NewExternalLinkPersistence(db),
+	)
 	genre := usecase.NewGenreUsecase(
 		persistence.NewGenrePersistence(db),
 	)
@@ -33,7 +36,14 @@ func main() {
 		persistence.NewAudioPersistence(storage),
 	)
 
-	resolver := graph.NewResolver(genre, playlist, playlistSource, user, track)
+	resolver := graph.NewResolver(
+		externalLink,
+		genre,
+		playlist,
+		playlistSource,
+		user,
+		track,
+	)
 
 	h := handler.NewGraphQLHandler(resolver)
 	p := handler.NewPlayGroundHandler()

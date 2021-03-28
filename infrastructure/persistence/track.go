@@ -37,8 +37,8 @@ func (p *trackPersistence) ListByUserID(userID int) ([]*models.Track, error) {
 }
 
 func (p *trackPersistence) Get(id int) (*models.Track, error) {
-	var track *models.Track
-	if err := p.db.Preload("User").Take(track).Error; err != nil {
+	track := &models.Track{}
+	if err := p.db.Preload("User").First(track, id).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, err
 		}

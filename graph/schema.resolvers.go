@@ -8,16 +8,20 @@ import (
 	"app/graph/generated"
 	"app/graph/model"
 	"context"
-	"fmt"
 )
 
+func (r *mutationResolver) CreateExternalLink(ctx context.Context, input model.CreateExternalLinkInput) (*models.ExternalLink, error) {
+	userID := ctx.Value("ID").(int)
+	return r.externalLink.Create(userID, input)
+}
+
 func (r *mutationResolver) CreatePlaylist(ctx context.Context, input model.CreatePlaylistInput) (*models.Playlist, error) {
-	userID := 1
+	userID := ctx.Value("ID").(int)
 	return r.playlist.Create(userID, input)
 }
 
 func (r *mutationResolver) CreatePlaylistSource(ctx context.Context, input model.CreatePlaylistSourceInput) (*models.PlaylistSource, error) {
-	userID := 1
+	userID := ctx.Value("ID").(int)
 	return r.playlistSource.Create(userID, input)
 }
 
@@ -28,6 +32,11 @@ func (r *mutationResolver) CreateTrack(ctx context.Context, input model.CreateTr
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*models.User, error) {
 	return r.user.Create(input)
+}
+
+func (r *mutationResolver) UpdateExternalLink(ctx context.Context, input model.UpdateExternalLinkInput) (*models.ExternalLink, error) {
+	userID := ctx.Value("ID").(int)
+	return r.externalLink.Update(userID, input)
 }
 
 func (r *mutationResolver) UpdateTrack(ctx context.Context, input model.UpdateTrackInput) (*models.Track, error) {
@@ -41,32 +50,36 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUse
 }
 
 func (r *mutationResolver) DeletePlaylist(ctx context.Context, input model.DeletePlaylistInput) (*models.Playlist, error) {
-	userID := 1
+	userID := ctx.Value("ID").(int)
 	return r.playlist.Delete(userID, input)
 }
 
 func (r *mutationResolver) DeletePlaylistSource(ctx context.Context, input model.DeletePlaylistSourceInput) ([]*models.PlaylistSource, error) {
-	userID := 1
+	userID := ctx.Value("ID").(int)
 	return r.playlistSource.BatchDelete(userID, input)
+}
+
+func (r *queryResolver) ExternalLinkByUserID(ctx context.Context, userID int) (*models.ExternalLink, error) {
+	return r.externalLink.Get(userID)
 }
 
 func (r *queryResolver) Genres(ctx context.Context) ([]*models.Genre, error) {
 	return r.genre.List()
 }
 
-func (r *queryResolver) PlaylistsByUser(ctx context.Context, userID int) ([]*models.Playlist, error) {
-	return r.playlist.ListByUserID(userID)
+func (r *queryResolver) Playlist(ctx context.Context, id int) (*models.Playlist, error) {
+	return r.playlist.Get(id)
 }
 
-func (r *queryResolver) PlaylistsByMe(ctx context.Context) ([]*models.Playlist, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) PlaylistsByUserID(ctx context.Context, userID int) ([]*models.Playlist, error) {
+	return r.playlist.ListByUserID(userID)
 }
 
 func (r *queryResolver) Track(ctx context.Context, id int) (*models.Track, error) {
 	return r.track.Get(id)
 }
 
-func (r *queryResolver) TracksByUser(ctx context.Context, userID int) ([]*models.Track, error) {
+func (r *queryResolver) TracksByUserID(ctx context.Context, userID int) ([]*models.Track, error) {
 	return r.track.ListByUserID(userID)
 }
 

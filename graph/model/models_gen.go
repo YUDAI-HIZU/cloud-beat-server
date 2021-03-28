@@ -6,9 +6,16 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+type CreateExternalLinkInput struct {
+	Twitter    *string `json:"twitter"`
+	SoundCloud *string `json:"soundCloud"`
+	Facebook   *string `json:"facebook"`
+	Youtube    *string `json:"youtube"`
+	Instagram  *string `json:"instagram"`
+}
+
 type CreatePlaylistInput struct {
 	Title    string `json:"title"`
-	Public   bool   `json:"public"`
 	TrackIDs []int  `json:"trackIDs"`
 }
 
@@ -18,9 +25,12 @@ type CreatePlaylistSourceInput struct {
 }
 
 type CreateTrackInput struct {
-	Title     string          `json:"title"`
-	Sound     graphql.Upload  `json:"sound"`
-	Thumbnail *graphql.Upload `json:"thumbnail"`
+	Title       string          `json:"title"`
+	Sound       graphql.Upload  `json:"sound"`
+	Thumbnail   *graphql.Upload `json:"thumbnail"`
+	Description string          `json:"description"`
+	YoutubeLink *string         `json:"youtube_link"`
+	GenreID     int             `json:"genre_id"`
 }
 
 type CreateUserInput struct {
@@ -37,10 +47,21 @@ type DeletePlaylistSourceInput struct {
 	TrackIDs   []int `json:"trackIDs"`
 }
 
+type UpdateExternalLinkInput struct {
+	Twitter    *string `json:"twitter"`
+	SoundCloud *string `json:"soundCloud"`
+	Facebook   *string `json:"facebook"`
+	Youtube    *string `json:"youtube"`
+	Instagram  *string `json:"instagram"`
+}
+
 type UpdateTrackInput struct {
-	Title     string          `json:"title"`
-	Sound     *graphql.Upload `json:"sound"`
-	Thumbnail *graphql.Upload `json:"thumbnail"`
+	Title       string          `json:"title"`
+	Sound       *graphql.Upload `json:"sound"`
+	Thumbnail   *graphql.Upload `json:"thumbnail"`
+	Description string          `json:"description"`
+	YoutubeLink *string         `json:"youtube_link"`
+	GenreID     int             `json:"genre_id"`
 }
 
 type UpdateUserInput struct {
@@ -48,10 +69,5 @@ type UpdateUserInput struct {
 	Cover        *graphql.Upload `json:"cover"`
 	DisplayName  *string         `json:"displayName"`
 	WebURL       *string         `json:"webUrl"`
-	Twitter      *string         `json:"twitter"`
-	SoundCloud   *string         `json:"soundCloud"`
-	Facebook     *string         `json:"facebook"`
-	Youtube      *string         `json:"youtube"`
-	Instagram    *string         `json:"instagram"`
 	Introduction *string         `json:"introduction"`
 }
