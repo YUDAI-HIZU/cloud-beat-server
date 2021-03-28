@@ -11,6 +11,7 @@ type playlistUsecase struct {
 }
 
 type PlaylistUsecase interface {
+	Get(id int) (*models.Playlist, error)
 	ListByUserID(userID int) ([]*models.Playlist, error)
 	Create(userID int, input model.CreatePlaylistInput) (*models.Playlist, error)
 	Delete(userID int, input model.DeletePlaylistInput) (*models.Playlist, error)
@@ -22,6 +23,10 @@ func NewPlaylistUsecase(p repository.PlaylistRepository) PlaylistUsecase {
 	}
 }
 
+func (u *playlistUsecase) Get(id int) (*models.Playlist, error) {
+	return u.playlistRepository.Get(id)
+}
+
 func (u *playlistUsecase) ListByUserID(userID int) ([]*models.Playlist, error) {
 	return u.playlistRepository.ListByUserID(userID)
 }
@@ -30,7 +35,6 @@ func (u *playlistUsecase) Create(userID int, input model.CreatePlaylistInput) (*
 	playlist := &models.Playlist{
 		UserID: userID,
 		Title:  input.Title,
-		Public: input.Public,
 	}
 	for _, trackID := range input.TrackIDs {
 		playlist.PlaylistSources = append(

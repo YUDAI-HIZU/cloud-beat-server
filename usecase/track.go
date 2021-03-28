@@ -47,8 +47,11 @@ func (u *trackUsecase) Get(id int) (*models.Track, error) {
 func (u *trackUsecase) Create(userID int, input model.CreateTrackInput) (*models.Track, error) {
 	var err error
 	track := &models.Track{
-		Title:  input.Title,
-		UserID: userID,
+		Title:       input.Title,
+		Description: input.Description,
+		YoutubeLink: *input.YoutubeLink,
+		GenreID:     input.GenreID,
+		UserID:      userID,
 	}
 
 	if input.Thumbnail != nil {
@@ -69,8 +72,11 @@ func (u *trackUsecase) Create(userID int, input model.CreateTrackInput) (*models
 func (u *trackUsecase) Update(userID int, input model.UpdateTrackInput) (*models.Track, error) {
 	var err error
 	track := &models.Track{
-		Title:  input.Title,
-		UserID: userID,
+		Title:       input.Title,
+		Description: input.Description,
+		YoutubeLink: *input.YoutubeLink,
+		GenreID:     input.GenreID,
+		UserID:      userID,
 	}
 
 	if input.Thumbnail != nil {

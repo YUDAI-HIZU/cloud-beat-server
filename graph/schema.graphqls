@@ -7,22 +7,25 @@ scalar Upload
 
 directive @authentication on FIELD_DEFINITION
 
+type ExternalLink {
+  user: User!
+  twitter: String
+  soundCloud: String
+  facebook: String
+  youtube: String
+  instagram: String
+}
+
 type Genre {
   id: ID!
   name: String!
-  createdAt: Time!
-  updatedAt: Time!
 }
 
 type Playlist {
   id: ID!
   title: String!
-  public: Boolean!
-  userID: ID!
   user: User!
   tracks: [Track!]!
-  createdAt: Time!
-  updatedAt: Time!
 }
 
 type PlaylistSource {
@@ -35,19 +38,16 @@ type Track {
   title: String!
   thumbnailUrl: String
   soundUrl: String!
-  userID: ID!
+  description: String!
+  youtube_link: String!
   user: User!
-  genres: [Genre!]!
-  createdAt: Time!
-  updatedAt: Time!
+  genre: Genre!
 }
 
 type DeviceToken {
   id: ID!
   userID: ID!
   Token: String!
-  createdAt: Time!
-  updatedAt: Time!
 }
 
 type User {
@@ -55,33 +55,34 @@ type User {
   uid: String!
   displayName: String!
   webUrl: String
-  twitter: String
-  soundCloud: String
-  facebook: String
-  youtube: String
-  instagram: String
   introduction: String
   iconUrl: String
   coverUrl: String
-  createdAt: Time!
-  updatedAt: Time!
 }
 
 type Query {
+  externalLinkByUserID(userID: ID!): ExternalLink!
   genres: [Genre!]!
-  playlistsByUser(userID: ID!): [Playlist!]!
-  playlistsByMe: [Playlist!]! @authentication
+  playlist(id: ID!): Playlist!
+  playlistsByUserID(userID: ID!): [Playlist!]!
   track(id: ID!): Track!
-  tracksByUser(userID: ID!): [Track!]!
+  tracksByUserID(userID: ID!): [Track!]!
   newReleaseTracks: [Track!]!
   pickUpTracks: [Track!]!
   user(id: ID!): User!
   me: User! @authentication
 }
 
+input CreateExternalLinkInput {
+  twitter: String
+  soundCloud: String
+  facebook: String
+  youtube: String
+  instagram: String
+}
+
 input CreatePlaylistInput {
   title: String!
-  public: Boolean!
   trackIDs: [ID!]
 }
 
@@ -94,6 +95,9 @@ input CreateTrackInput {
   title: String!
   sound: Upload!
   thumbnail: Upload
+  description: String!
+  youtube_link: String
+  genre_id: ID!
 }
 
 input CreateUserInput {
@@ -101,10 +105,21 @@ input CreateUserInput {
   displayName: String!
 }
 
+input UpdateExternalLinkInput {
+  twitter: String
+  soundCloud: String
+  facebook: String
+  youtube: String
+  instagram: String
+}
+
 input UpdateTrackInput {
   title: String!
   sound: Upload
   thumbnail: Upload
+  description: String!
+  youtube_link: String
+  genre_id: ID!
 }
 
 input UpdateUserInput {
@@ -112,11 +127,6 @@ input UpdateUserInput {
   cover: Upload
   displayName: String
   webUrl: String
-  twitter: String
-  soundCloud: String
-  facebook: String
-  youtube: String
-  instagram: String
   introduction: String
 }
 
@@ -130,12 +140,14 @@ input DeletePlaylistSourceInput {
 }
 
 type Mutation {
-  createPlaylist(input: CreatePlaylistInput!): Playlist!
-  createPlaylistSource(input: CreatePlaylistSourceInput!): PlaylistSource!
+  createExternalLink(input: CreateExternalLinkInput!): ExternalLink! @authentication
+  createPlaylist(input: CreatePlaylistInput!): Playlist! @authentication
+  createPlaylistSource(input: CreatePlaylistSourceInput!): PlaylistSource! @authentication
   createTrack(input: CreateTrackInput!): Track! @authentication
   createUser(input: CreateUserInput!): User!
+  updateExternalLink(input: UpdateExternalLinkInput!): ExternalLink! @authentication
   updateTrack(input: UpdateTrackInput!): Track! @authentication
   updateUser(input: UpdateUserInput!): User! @authentication
-  deletePlaylist(input: DeletePlaylistInput!): Playlist!
-  deletePlaylistSource(input: DeletePlaylistSourceInput!): [PlaylistSource!]!
+  deletePlaylist(input: DeletePlaylistInput!): Playlist! @authentication
+  deletePlaylistSource(input: DeletePlaylistSourceInput!): [PlaylistSource!]! @authentication
 }

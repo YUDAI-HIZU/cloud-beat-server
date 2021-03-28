@@ -11,9 +11,12 @@ type Track struct {
 	Title         string
 	ThumbnailPath string
 	SoundPath     string
+	Description   string
+	YoutubeLink   string
 	UserID        int
+	GenreID       int
 	User          *User
-	Genres        []*Genre
+	Genre         *Genre
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
