@@ -8,4 +8,5 @@ type TrackRepository interface {
 	Get(id int) (*models.Track, error)
 	Create(track *models.Track) (*models.Track, error)
 	Update(track *models.Track) (*models.Track, error)
+	Delete(id int, userID int) (*models.Track, error)
 }
