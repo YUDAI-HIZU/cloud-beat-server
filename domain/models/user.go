@@ -13,7 +13,6 @@ type User struct {
 	WebURL       string
 	Introduction string
 	IconPath     string
-	CoverPath    string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -23,11 +22,4 @@ func (u *User) IconUrl() string {
 		return ""
 	}
 	return fmt.Sprintf("%s/%s", config.AssetEndpoint, u.IconPath)
-}
-
-func (u *User) CoverUrl() string {
-	if u.CoverPath == "" {
-		return ""
-	}
-	return fmt.Sprintf("%s/%s", config.AssetEndpoint, u.CoverPath)
 }

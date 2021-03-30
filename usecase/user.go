@@ -70,12 +70,5 @@ func (u *userUsecase) Update(id int, input model.UpdateUserInput) (*models.User,
 		}
 	}
 
-	if input.Cover != nil {
-		user.CoverPath, err = u.imageRepository.Upload("covers", input.Cover)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	return u.userRepository.Update(user)
 }
