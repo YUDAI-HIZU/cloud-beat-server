@@ -21,6 +21,13 @@ type Genre {
   name: String!
 }
 
+type MusicVideo {
+  id: ID!
+  user: User!
+  text: String!
+  videoUrl: String!
+}
+
 type Playlist {
   id: ID!
   title: String!
@@ -57,7 +64,6 @@ type User {
   webUrl: String
   introduction: String
   iconUrl: String
-  coverUrl: String
 }
 
 type Query {
@@ -79,6 +85,11 @@ input CreateExternalLinkInput {
   facebook: String
   youtube: String
   instagram: String
+}
+
+input CreateMusicVideoInput {
+  text: String!
+  video: Upload!
 }
 
 input CreatePlaylistInput {
@@ -124,10 +135,13 @@ input UpdateTrackInput {
 
 input UpdateUserInput {
   icon: Upload
-  cover: Upload
   displayName: String
   webUrl: String
   introduction: String
+}
+
+input DeleteMusicVideoInput {
+  id: ID!
 }
 
 input DeletePlaylistInput {
@@ -139,8 +153,13 @@ input DeletePlaylistSourceInput {
   trackIDs: [ID!]!
 }
 
+input DeleteTrackInput {
+  id: ID!
+}
+
 type Mutation {
   createExternalLink(input: CreateExternalLinkInput!): ExternalLink! @authentication
+  createMusicVideo(input: CreateMusicVideoInput!): MusicVideo!
   createPlaylist(input: CreatePlaylistInput!): Playlist! @authentication
   createPlaylistSource(input: CreatePlaylistSourceInput!): PlaylistSource! @authentication
   createTrack(input: CreateTrackInput!): Track! @authentication
@@ -148,6 +167,9 @@ type Mutation {
   updateExternalLink(input: UpdateExternalLinkInput!): ExternalLink! @authentication
   updateTrack(input: UpdateTrackInput!): Track! @authentication
   updateUser(input: UpdateUserInput!): User! @authentication
+  deleteMusicVideo(input: DeleteMusicVideoInput!): MusicVideo!
   deletePlaylist(input: DeletePlaylistInput!): Playlist! @authentication
   deletePlaylistSource(input: DeletePlaylistSourceInput!): [PlaylistSource!]! @authentication
+  deleteTrack(input: DeleteTrackInput!): Track! @authentication
+  deleteUser: User! @authentication
 }

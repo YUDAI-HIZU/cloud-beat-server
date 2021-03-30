@@ -56,6 +56,8 @@ models:
     model: app/domain/models.ExternalLink
   Genre:
     model: app/domain/models.Genre
+  MusicVideo:
+    model: app/domain/models.MusicVideo
   Playlist:
     model: app/domain/models.Playlist
   Track:

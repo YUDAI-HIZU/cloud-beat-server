@@ -8,6 +8,7 @@ import "app/usecase"
 
 type Resolver struct {
 	externalLink   usecase.ExternalLinkUsecase
+	musicVideo     usecase.MusicVideoUsecase
 	genre          usecase.GenreUsecase
 	playlist       usecase.PlaylistUsecase
 	playlistSource usecase.PlaylistSourceUsecase
@@ -17,6 +18,7 @@ type Resolver struct {
 
 func NewResolver(
 	externalLink usecase.ExternalLinkUsecase,
+	musicVideo usecase.MusicVideoUsecase,
 	genre usecase.GenreUsecase,
 	playlist usecase.PlaylistUsecase,
 	playlistSource usecase.PlaylistSourceUsecase,
@@ -25,6 +27,7 @@ func NewResolver(
 ) *Resolver {
 	return &Resolver{
 		externalLink,
+		musicVideo,
 		genre,
 		playlist,
 		playlistSource,

@@ -8,11 +8,17 @@ import (
 	"app/graph/generated"
 	"app/graph/model"
 	"context"
+	"fmt"
 )
 
 func (r *mutationResolver) CreateExternalLink(ctx context.Context, input model.CreateExternalLinkInput) (*models.ExternalLink, error) {
 	userID := ctx.Value("ID").(int)
 	return r.externalLink.Create(userID, input)
+}
+
+func (r *mutationResolver) CreateMusicVideo(ctx context.Context, input model.CreateMusicVideoInput) (*models.MusicVideo, error) {
+	userID := 1
+	return r.musicVideo.Create(userID, input)
 }
 
 func (r *mutationResolver) CreatePlaylist(ctx context.Context, input model.CreatePlaylistInput) (*models.Playlist, error) {
@@ -49,6 +55,11 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUse
 	return r.user.Update(id, input)
 }
 
+func (r *mutationResolver) DeleteMusicVideo(ctx context.Context, input model.DeleteMusicVideoInput) (*models.MusicVideo, error) {
+	userID := 1
+	return r.musicVideo.Delete(userID, input)
+}
+
 func (r *mutationResolver) DeletePlaylist(ctx context.Context, input model.DeletePlaylistInput) (*models.Playlist, error) {
 	userID := ctx.Value("ID").(int)
 	return r.playlist.Delete(userID, input)
@@ -57,6 +68,15 @@ func (r *mutationResolver) DeletePlaylist(ctx context.Context, input model.Delet
 func (r *mutationResolver) DeletePlaylistSource(ctx context.Context, input model.DeletePlaylistSourceInput) ([]*models.PlaylistSource, error) {
 	userID := ctx.Value("ID").(int)
 	return r.playlistSource.BatchDelete(userID, input)
+}
+
+func (r *mutationResolver) DeleteTrack(ctx context.Context, input model.DeleteTrackInput) (*models.Track, error) {
+	userID := 1
+	return r.track.Delete(userID, input)
+}
+
+func (r *mutationResolver) DeleteUser(ctx context.Context) (*models.User, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) ExternalLinkByUserID(ctx context.Context, userID int) (*models.ExternalLink, error) {
