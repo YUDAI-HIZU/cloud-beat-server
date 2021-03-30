@@ -60,3 +60,11 @@ func (p *trackPersistence) Update(track *models.Track) (*models.Track, error) {
 	}
 	return track, nil
 }
+
+func (p *trackPersistence) Delete(id int, userID int) (*models.Track, error) {
+	track := &models.Track{}
+	if err := p.db.Where("id = ? AND user_id = ?", id, userID).Take(track).Delete(track).Error; err != nil {
+		return nil, err
+	}
+	return track, nil
+}

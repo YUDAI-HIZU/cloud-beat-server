@@ -18,6 +18,7 @@ type TrackUsecase interface {
 	Get(id int) (*models.Track, error)
 	Create(userID int, input model.CreateTrackInput) (*models.Track, error)
 	Update(userID int, input model.UpdateTrackInput) (*models.Track, error)
+	Delete(userID int, input model.DeleteTrackInput) (*models.Track, error)
 }
 
 func NewTrackUsecase(
@@ -94,4 +95,8 @@ func (u *trackUsecase) Update(userID int, input model.UpdateTrackInput) (*models
 	}
 
 	return u.trackRepository.Update(track)
+}
+
+func (u *trackUsecase) Delete(userID int, input model.DeleteTrackInput) (*models.Track, error) {
+	return u.trackRepository.Delete(input.ID, userID)
 }
