@@ -4,14 +4,13 @@ import (
 	"app/domain/models"
 	"app/domain/repository"
 	"app/graph/model"
-	"app/infrastructure/auth"
-	"context"
-	"log"
+	"app/usecase/validations"
 )
 
 type userUsecase struct {
 	userRepository  repository.UserRepository
 	imageRepository repository.ImageRepository
+	authRepository  repository.AuthRepository
 }
 
 type UserUsecase interface {
@@ -23,10 +22,12 @@ type UserUsecase interface {
 func NewUserUsecase(
 	u repository.UserRepository,
 	i repository.ImageRepository,
+	a repository.AuthRepository,
 ) UserUsecase {
 	return &userUsecase{
 		u,
 		i,
+		a,
 	}
 }
 
@@ -40,15 +41,17 @@ func (u *userUsecase) Create(input model.CreateUserInput) (*models.User, error) 
 		DisplayName: input.DisplayName,
 	}
 
+	if err := validations.UserCreateValidation(user); err != nil {
+		return nil, err
+	}
+
 	user, err := u.userRepository.Create(user)
 	if err != nil {
 		return nil, err
 	}
 
-	auth := auth.NewAuthClient(context.Background())
-
-	if err = auth.SetIDToClaims(input.UID, user.ID); err != nil {
-		log.Fatalf("error setting custom claims %v\n", err)
+	if err = u.authRepository.SetIDToClaims(input.UID, user.ID); err != nil {
+		return nil, err
 	}
 
 	return user, nil

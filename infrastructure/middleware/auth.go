@@ -13,16 +13,16 @@ import (
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
-		auth := auth.NewAuthClient(ctx)
+		client := auth.NewAuthClient(ctx)
 		authorization := c.Request.Header.Get("Authorization")
 		idToken := strings.Replace(authorization, "Bearer ", "", 1)
-		token, err := auth.VerifyIDToken(ctx, idToken)
+		token, err := client.VerifyIDToken(ctx, idToken)
 		if err != nil {
 			ctx = context.WithValue(
 				ctx,
 				"authError",
 				&gqlerror.Error{
-					Message: "トークンが有効ではありません",
+					Message: err.Error(),
 					Extensions: map[string]interface{}{
 						"status": http.StatusUnauthorized,
 						"code":   "BAD_CREDENTIALS",
