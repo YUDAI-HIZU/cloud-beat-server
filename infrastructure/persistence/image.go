@@ -34,3 +34,7 @@ func (p *imagePersistence) Upload(prefix string, img *graphql.Upload) (string, e
 	}
 	return path, nil
 }
+
+func (p *imagePersistence) Delete(path string) error {
+	return p.storage.Bucket(config.BucketName).Object(path).Delete(context.Background())
+}

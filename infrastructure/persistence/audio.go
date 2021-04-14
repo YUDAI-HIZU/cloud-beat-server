@@ -34,3 +34,7 @@ func (p *audioPersistence) Upload(prefix string, audio *graphql.Upload) (string,
 	}
 	return path, nil
 }
+
+func (p *audioPersistence) Delete(path string) error {
+	return p.storage.Bucket(config.BucketName).Object(path).Delete(context.Background())
+}

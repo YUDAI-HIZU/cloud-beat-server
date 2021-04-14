@@ -62,7 +62,7 @@ func (u *trackUsecase) Create(userID int, input model.CreateTrackInput) (*models
 		}
 	}
 
-	track.SoundPath, err = u.AudioRepository.Upload("sounds", &input.Sound)
+	track.AudioPath, err = u.AudioRepository.Upload("audios", &input.Audio)
 	if err != nil {
 		return nil, err
 	}
@@ -87,8 +87,8 @@ func (u *trackUsecase) Update(userID int, input model.UpdateTrackInput) (*models
 		}
 	}
 
-	if input.Sound != nil {
-		track.SoundPath, err = u.AudioRepository.Upload("sounds", input.Sound)
+	if input.Audio != nil {
+		track.AudioPath, err = u.AudioRepository.Upload("audios", input.Audio)
 		if err != nil {
 			return nil, err
 		}
@@ -98,5 +98,18 @@ func (u *trackUsecase) Update(userID int, input model.UpdateTrackInput) (*models
 }
 
 func (u *trackUsecase) Delete(userID int, input model.DeleteTrackInput) (*models.Track, error) {
-	return u.trackRepository.Delete(input.ID, userID)
+	track, err := u.trackRepository.Delete(input.ID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := u.imageRepository.Delete(track.ThumbnailPath); err != nil {
+		return nil, err
+	}
+
+	if err := u.AudioRepository.Delete(track.AudioPath); err != nil {
+		return nil, err
+	}
+
+	return track, nil
 }
