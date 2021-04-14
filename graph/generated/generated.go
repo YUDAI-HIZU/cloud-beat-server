@@ -57,7 +57,6 @@ type ComplexityRoot struct {
 		Instagram  func(childComplexity int) int
 		SoundCloud func(childComplexity int) int
 		Twitter    func(childComplexity int) int
-		User       func(childComplexity int) int
 		Youtube    func(childComplexity int) int
 	}
 
@@ -116,10 +115,10 @@ type ComplexityRoot struct {
 	}
 
 	Track struct {
+		AudioURL     func(childComplexity int) int
 		Description  func(childComplexity int) int
 		Genre        func(childComplexity int) int
 		ID           func(childComplexity int) int
-		SoundUrl     func(childComplexity int) int
 		ThumbnailUrl func(childComplexity int) int
 		Title        func(childComplexity int) int
 		User         func(childComplexity int) int
@@ -228,13 +227,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ExternalLink.Twitter(childComplexity), true
-
-	case "ExternalLink.user":
-		if e.complexity.ExternalLink.User == nil {
-			break
-		}
-
-		return e.complexity.ExternalLink.User(childComplexity), true
 
 	case "ExternalLink.youtube":
 		if e.complexity.ExternalLink.Youtube == nil {
@@ -590,6 +582,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["id"].(int)), true
 
+	case "Track.audioUrl":
+		if e.complexity.Track.AudioURL == nil {
+			break
+		}
+
+		return e.complexity.Track.AudioURL(childComplexity), true
+
 	case "Track.description":
 		if e.complexity.Track.Description == nil {
 			break
@@ -610,13 +609,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Track.ID(childComplexity), true
-
-	case "Track.soundUrl":
-		if e.complexity.Track.SoundUrl == nil {
-			break
-		}
-
-		return e.complexity.Track.SoundUrl(childComplexity), true
 
 	case "Track.thumbnailUrl":
 		if e.complexity.Track.ThumbnailUrl == nil {
@@ -639,7 +631,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Track.User(childComplexity), true
 
-	case "Track.youtube_link":
+	case "Track.youtubeLink":
 		if e.complexity.Track.YoutubeLink == nil {
 			break
 		}
@@ -762,7 +754,6 @@ scalar Upload
 directive @authentication on FIELD_DEFINITION
 
 type ExternalLink {
-  user: User!
   twitter: String
   soundCloud: String
   facebook: String
@@ -798,9 +789,9 @@ type Track {
   id: ID!
   title: String!
   thumbnailUrl: String
-  soundUrl: String!
+  audioUrl: String!
   description: String!
-  youtube_link: String!
+  youtubeLink: String!
   user: User!
   genre: Genre!
 }
@@ -858,11 +849,11 @@ input CreatePlaylistSourceInput {
 
 input CreateTrackInput {
   title: String!
-  sound: Upload!
+  audio: Upload!
   thumbnail: Upload
   description: String!
-  youtube_link: String
-  genre_id: ID!
+  youtubeLink: String
+  genreID: ID!
 }
 
 input CreateUserInput {
@@ -880,7 +871,7 @@ input UpdateExternalLinkInput {
 
 input UpdateTrackInput {
   title: String!
-  sound: Upload
+  audio: Upload
   thumbnail: Upload
   description: String!
   youtube_link: String
@@ -912,7 +903,7 @@ input DeleteTrackInput {
 }
 
 type Mutation {
-  createExternalLink(input: CreateExternalLinkInput!): ExternalLink! @authentication
+  createExternalLink(input: CreateExternalLinkInput!): ExternalLink @authentication
   createMusicVideo(input: CreateMusicVideoInput!): MusicVideo!
   createPlaylist(input: CreatePlaylistInput!): Playlist! @authentication
   createPlaylistSource(input: CreatePlaylistSourceInput!): PlaylistSource! @authentication
@@ -1378,41 +1369,6 @@ func (ec *executionContext) _DeviceToken_Token(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ExternalLink_user(ctx context.Context, field graphql.CollectedField, obj *models.ExternalLink) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "ExternalLink",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.User, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*models.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖappᚋdomainᚋmodelsᚐUser(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _ExternalLink_twitter(ctx context.Context, field graphql.CollectedField, obj *models.ExternalLink) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1835,14 +1791,11 @@ func (ec *executionContext) _Mutation_createExternalLink(ctx context.Context, fi
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*models.ExternalLink)
 	fc.Result = res
-	return ec.marshalNExternalLink2ᚖappᚋdomainᚋmodelsᚐExternalLink(ctx, field.Selections, res)
+	return ec.marshalOExternalLink2ᚖappᚋdomainᚋmodelsᚐExternalLink(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createMusicVideo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -3379,7 +3332,7 @@ func (ec *executionContext) _Track_thumbnailUrl(ctx context.Context, field graph
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Track_soundUrl(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+func (ec *executionContext) _Track_audioUrl(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3397,7 +3350,7 @@ func (ec *executionContext) _Track_soundUrl(ctx context.Context, field graphql.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SoundUrl(), nil
+		return obj.AudioURL(), nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3449,7 +3402,7 @@ func (ec *executionContext) _Track_description(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Track_youtube_link(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
+func (ec *executionContext) _Track_youtubeLink(ctx context.Context, field graphql.CollectedField, obj *models.Track) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4992,11 +4945,11 @@ func (ec *executionContext) unmarshalInputCreateTrackInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "sound":
+		case "audio":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sound"))
-			it.Sound, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("audio"))
+			it.Audio, err = ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5016,18 +4969,18 @@ func (ec *executionContext) unmarshalInputCreateTrackInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "youtube_link":
+		case "youtubeLink":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("youtube_link"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("youtubeLink"))
 			it.YoutubeLink, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-		case "genre_id":
+		case "genreID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genre_id"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("genreID"))
 			it.GenreID, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
@@ -5220,11 +5173,11 @@ func (ec *executionContext) unmarshalInputUpdateTrackInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "sound":
+		case "audio":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sound"))
-			it.Sound, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("audio"))
+			it.Audio, err = ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5366,11 +5319,6 @@ func (ec *executionContext) _ExternalLink(ctx context.Context, sel ast.Selection
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("ExternalLink")
-		case "user":
-			out.Values[i] = ec._ExternalLink_user(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "twitter":
 			out.Values[i] = ec._ExternalLink_twitter(ctx, field, obj)
 		case "soundCloud":
@@ -5483,9 +5431,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "createExternalLink":
 			out.Values[i] = ec._Mutation_createExternalLink(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "createMusicVideo":
 			out.Values[i] = ec._Mutation_createMusicVideo(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -5829,8 +5774,8 @@ func (ec *executionContext) _Track(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "thumbnailUrl":
 			out.Values[i] = ec._Track_thumbnailUrl(ctx, field, obj)
-		case "soundUrl":
-			out.Values[i] = ec._Track_soundUrl(ctx, field, obj)
+		case "audioUrl":
+			out.Values[i] = ec._Track_audioUrl(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -5839,8 +5784,8 @@ func (ec *executionContext) _Track(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "youtube_link":
-			out.Values[i] = ec._Track_youtube_link(ctx, field, obj)
+		case "youtubeLink":
+			out.Values[i] = ec._Track_youtubeLink(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -6816,6 +6761,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return graphql.MarshalBoolean(*v)
+}
+
+func (ec *executionContext) marshalOExternalLink2ᚖappᚋdomainᚋmodelsᚐExternalLink(ctx context.Context, sel ast.SelectionSet, v *models.ExternalLink) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ExternalLink(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOID2ᚕintᚄ(ctx context.Context, v interface{}) ([]int, error) {

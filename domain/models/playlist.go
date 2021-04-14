@@ -3,10 +3,11 @@ package models
 import "time"
 
 type Playlist struct {
-	ID              int
-	Title           string
-	UserID          int
-	User            *User
+	ID     int
+	Title  string
+	UserID int
+	User   *User
+	// TODO: infrastructureに依存させない
 	Tracks          []*Track `gorm:"many2many:playlist_sources"`
 	PlaylistSources []*PlaylistSource
 	CreatedAt       time.Time

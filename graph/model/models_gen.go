@@ -31,11 +31,11 @@ type CreatePlaylistSourceInput struct {
 
 type CreateTrackInput struct {
 	Title       string          `json:"title"`
-	Sound       graphql.Upload  `json:"sound"`
+	Audio       graphql.Upload  `json:"audio"`
 	Thumbnail   *graphql.Upload `json:"thumbnail"`
 	Description string          `json:"description"`
-	YoutubeLink *string         `json:"youtube_link"`
-	GenreID     int             `json:"genre_id"`
+	YoutubeLink *string         `json:"youtubeLink"`
+	GenreID     int             `json:"genreID"`
 }
 
 type CreateUserInput struct {
@@ -70,7 +70,7 @@ type UpdateExternalLinkInput struct {
 
 type UpdateTrackInput struct {
 	Title       string          `json:"title"`
-	Sound       *graphql.Upload `json:"sound"`
+	Audio       *graphql.Upload `json:"audio"`
 	Thumbnail   *graphql.Upload `json:"thumbnail"`
 	Description string          `json:"description"`
 	YoutubeLink *string         `json:"youtube_link"`

@@ -5,7 +5,7 @@ CREATE TABLE tracks (
   user_id         BIGINT(20) NOT NULL,
   title           VARCHAR(255) NOT NULL,
   thumbnail_path  VARCHAR(255) DEFAULT NULL,
-  sound_path      VARCHAR(255) NOT NULL,
+  audio_path      VARCHAR(255) NOT NULL,
   description     TEXT NOT NULL,
   youtube_link    VARCHAR(255) NOT NULL,
   genre_id        BIGINT(20) NOT NULL,
