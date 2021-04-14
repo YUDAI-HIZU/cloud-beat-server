@@ -2,17 +2,20 @@ package main
 
 import (
 	"app/graph"
+	"app/infrastructure/auth"
 	"app/infrastructure/database"
 	"app/infrastructure/handler"
 	"app/infrastructure/persistence"
 	"app/infrastructure/router"
 	"app/infrastructure/storage"
 	"app/usecase"
+	"context"
 )
 
 func main() {
 	db := database.NewDatabase()
 	storage := storage.NewStorage()
+	auth := auth.NewAuthClient(context.Background())
 
 	externalLink := usecase.NewExternalLinkUsecase(
 		persistence.NewExternalLinkPersistence(db),
@@ -33,6 +36,7 @@ func main() {
 	user := usecase.NewUserUsecase(
 		persistence.NewUserPersistence(db),
 		persistence.NewImagePersistence(storage),
+		persistence.NewAuthPersistence(auth),
 	)
 	track := usecase.NewTrackUsecase(
 		persistence.NewTrackPersistence(db),
