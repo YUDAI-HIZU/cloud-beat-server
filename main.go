@@ -13,16 +13,14 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	db := database.NewDatabase()
-	storage := storage.NewStorage()
-	auth := auth.NewAuthClient(context.Background())
+	storage := storage.NewStorage(ctx)
+	auth := auth.NewAuthClient(ctx)
 
 	externalLink := usecase.NewExternalLinkUsecase(
 		persistence.NewExternalLinkPersistence(db),
-	)
-	musicVideo := usecase.NewMusicVideoUsecase(
-		persistence.NewMusicVideoPersistence(db),
-		persistence.NewVideoPersistence(storage),
 	)
 	genre := usecase.NewGenreUsecase(
 		persistence.NewGenrePersistence(db),
@@ -46,7 +44,6 @@ func main() {
 
 	resolver := graph.NewResolver(
 		externalLink,
-		musicVideo,
 		genre,
 		playlist,
 		playlistSource,

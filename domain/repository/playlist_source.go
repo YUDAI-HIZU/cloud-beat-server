@@ -1,8 +1,11 @@
 package repository
 
-import "app/domain/models"
+import (
+	"app/domain/models"
+	"context"
+)
 
 type PlaylistSourceRepository interface {
-	Create(userID int, playlistSource *models.PlaylistSource) (*models.PlaylistSource, error)
-	BatchDelete(userID int, playlistID int, trackIDs []int) ([]*models.PlaylistSource, error)
+	Create(ctx context.Context, playlistSource *models.PlaylistSource) (*models.PlaylistSource, error)
+	Delete(ctx context.Context, playlistSource *models.PlaylistSource) (*models.PlaylistSource, error)
 }

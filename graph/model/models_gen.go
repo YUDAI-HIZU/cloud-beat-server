@@ -14,11 +14,6 @@ type CreateExternalLinkInput struct {
 	Instagram  *string `json:"instagram"`
 }
 
-type CreateMusicVideoInput struct {
-	Text  string         `json:"text"`
-	Video graphql.Upload `json:"video"`
-}
-
 type CreatePlaylistInput struct {
 	Title    string `json:"title"`
 	TrackIDs []int  `json:"trackIDs"`
@@ -43,17 +38,13 @@ type CreateUserInput struct {
 	DisplayName string `json:"displayName"`
 }
 
-type DeleteMusicVideoInput struct {
-	ID int `json:"id"`
-}
-
 type DeletePlaylistInput struct {
 	ID int `json:"id"`
 }
 
 type DeletePlaylistSourceInput struct {
-	PlaylistID int   `json:"playlistID"`
-	TrackIDs   []int `json:"trackIDs"`
+	PlaylistID int `json:"playlistID"`
+	TrackID    int `json:"trackID"`
 }
 
 type DeleteTrackInput struct {
@@ -66,15 +57,6 @@ type UpdateExternalLinkInput struct {
 	Facebook   *string `json:"facebook"`
 	Youtube    *string `json:"youtube"`
 	Instagram  *string `json:"instagram"`
-}
-
-type UpdateTrackInput struct {
-	Title       string          `json:"title"`
-	Audio       *graphql.Upload `json:"audio"`
-	Thumbnail   *graphql.Upload `json:"thumbnail"`
-	Description string          `json:"description"`
-	YoutubeLink *string         `json:"youtube_link"`
-	GenreID     int             `json:"genre_id"`
 }
 
 type UpdateUserInput struct {

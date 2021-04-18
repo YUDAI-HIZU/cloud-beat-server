@@ -9,70 +9,168 @@ import (
 	"app/graph/model"
 	"context"
 	"fmt"
+
+	"github.com/google/uuid"
 )
 
 func (r *mutationResolver) CreateExternalLink(ctx context.Context, input model.CreateExternalLinkInput) (*models.ExternalLink, error) {
-	userID := ctx.Value("ID").(int)
-	return r.externalLink.Create(userID, input)
-}
+	userID := ctx.Value("id").(int)
 
-func (r *mutationResolver) CreateMusicVideo(ctx context.Context, input model.CreateMusicVideoInput) (*models.MusicVideo, error) {
-	userID := 1
-	return r.musicVideo.Create(userID, input)
+	e := &models.ExternalLink{
+		Twitter:    *input.Twitter,
+		SoundCloud: *input.SoundCloud,
+		Facebook:   *input.Facebook,
+		Youtube:    *input.Youtube,
+		Instagram:  *input.Instagram,
+		UserID:     userID,
+	}
+
+	return r.externalLink.Create(ctx, e)
 }
 
 func (r *mutationResolver) CreatePlaylist(ctx context.Context, input model.CreatePlaylistInput) (*models.Playlist, error) {
-	userID := ctx.Value("ID").(int)
-	return r.playlist.Create(userID, input)
+	userID := ctx.Value("id").(int)
+
+	p := &models.Playlist{
+		UserID: userID,
+		Title:  input.Title,
+	}
+
+	for _, trackID := range input.TrackIDs {
+		p.PlaylistSources = append(
+			p.PlaylistSources,
+			&models.PlaylistSource{
+				TrackID: trackID,
+			},
+		)
+	}
+
+	return r.playlist.Create(ctx, p)
 }
 
 func (r *mutationResolver) CreatePlaylistSource(ctx context.Context, input model.CreatePlaylistSourceInput) (*models.PlaylistSource, error) {
-	userID := ctx.Value("ID").(int)
-	return r.playlistSource.Create(userID, input)
+	userID := ctx.Value("id").(int)
+
+	p := &models.PlaylistSource{
+		PlaylistID: input.PlaylistID,
+		TrackID:    input.TrackID,
+		Playlist: &models.Playlist{
+			UserID: userID,
+		},
+	}
+
+	return r.playlistSource.Create(ctx, p)
 }
 
 func (r *mutationResolver) CreateTrack(ctx context.Context, input model.CreateTrackInput) (*models.Track, error) {
-	userID := ctx.Value("ID").(int)
-	return r.track.Create(userID, input)
+	userID := ctx.Value("id").(int)
+
+	t := &models.Track{
+		Title:       input.Title,
+		Description: input.Description,
+		YoutubeLink: *input.YoutubeLink,
+		ThumbName:   uuid.New().String(),
+		AudioName:   uuid.New().String(),
+		GenreID:     input.GenreID,
+		UserID:      userID,
+	}
+
+	i := &models.Image{
+		Prefix: "thumbs",
+		Name:   t.ThumbName,
+	}
+
+	a := &models.Audio{
+		Prefix: "audios",
+		Name:   t.AudioName,
+	}
+
+	i.Buf.ReadFrom(input.Thumbnail.File)
+
+	a.Buf.ReadFrom(input.Audio.File)
+
+	return r.track.Create(ctx, t, i, a)
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*models.User, error) {
-	return r.user.Create(input)
+	u := &models.User{
+		UID:         input.UID,
+		DisplayName: input.DisplayName,
+	}
+
+	return r.user.Create(ctx, u)
 }
 
 func (r *mutationResolver) UpdateExternalLink(ctx context.Context, input model.UpdateExternalLinkInput) (*models.ExternalLink, error) {
-	userID := ctx.Value("ID").(int)
-	return r.externalLink.Update(userID, input)
-}
+	userID := ctx.Value("id").(int)
 
-func (r *mutationResolver) UpdateTrack(ctx context.Context, input model.UpdateTrackInput) (*models.Track, error) {
-	userID := ctx.Value("ID").(int)
-	return r.track.Update(userID, input)
+	e := &models.ExternalLink{
+		Twitter:    *input.Twitter,
+		SoundCloud: *input.SoundCloud,
+		Facebook:   *input.Facebook,
+		Youtube:    *input.Youtube,
+		Instagram:  *input.Instagram,
+		UserID:     userID,
+	}
+
+	return r.externalLink.Update(ctx, e)
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*models.User, error) {
-	id := ctx.Value("ID").(int)
-	return r.user.Update(id, input)
-}
+	id := ctx.Value("id").(int)
 
-func (r *mutationResolver) DeleteMusicVideo(ctx context.Context, input model.DeleteMusicVideoInput) (*models.MusicVideo, error) {
-	userID := 1
-	return r.musicVideo.Delete(userID, input)
+	u := &models.User{
+		ID:           id,
+		DisplayName:  *input.DisplayName,
+		WebURL:       *input.WebURL,
+		IconName:     uuid.New().String(),
+		Introduction: *input.Introduction,
+	}
+
+	i := &models.Image{
+		Prefix: "icons",
+		Name:   u.IconName,
+	}
+
+	i.Buf.ReadFrom(input.Icon.File)
+
+	return r.user.Update(ctx, u, i)
 }
 
 func (r *mutationResolver) DeletePlaylist(ctx context.Context, input model.DeletePlaylistInput) (*models.Playlist, error) {
-	userID := ctx.Value("ID").(int)
-	return r.playlist.Delete(userID, input)
+	userID := ctx.Value("id").(int)
+
+	p := &models.Playlist{
+		ID:     input.ID,
+		UserID: userID,
+	}
+
+	return r.playlist.Delete(ctx, p)
 }
 
-func (r *mutationResolver) DeletePlaylistSource(ctx context.Context, input model.DeletePlaylistSourceInput) ([]*models.PlaylistSource, error) {
-	userID := ctx.Value("ID").(int)
-	return r.playlistSource.BatchDelete(userID, input)
+func (r *mutationResolver) DeletePlaylistSource(ctx context.Context, input model.DeletePlaylistSourceInput) (*models.PlaylistSource, error) {
+	userID := ctx.Value("id").(int)
+
+	p := &models.PlaylistSource{
+		PlaylistID: input.PlaylistID,
+		TrackID:    input.TrackID,
+		Playlist: &models.Playlist{
+			UserID: userID,
+		},
+	}
+
+	return r.playlistSource.Delete(ctx, p)
 }
 
 func (r *mutationResolver) DeleteTrack(ctx context.Context, input model.DeleteTrackInput) (*models.Track, error) {
-	userID := 1
-	return r.track.Delete(userID, input)
+	userID := ctx.Value("id").(int)
+
+	t := &models.Track{
+		ID:     input.ID,
+		UserID: userID,
+	}
+
+	return r.track.Delete(ctx, t)
 }
 
 func (r *mutationResolver) DeleteUser(ctx context.Context) (*models.User, error) {
@@ -80,44 +178,44 @@ func (r *mutationResolver) DeleteUser(ctx context.Context) (*models.User, error)
 }
 
 func (r *queryResolver) ExternalLinkByUserID(ctx context.Context, userID int) (*models.ExternalLink, error) {
-	return r.externalLink.Get(userID)
+	return r.externalLink.Get(ctx, userID)
 }
 
 func (r *queryResolver) Genres(ctx context.Context) ([]*models.Genre, error) {
-	return r.genre.List()
+	return r.genre.List(ctx)
 }
 
 func (r *queryResolver) Playlist(ctx context.Context, id int) (*models.Playlist, error) {
-	return r.playlist.Get(id)
+	return r.playlist.Get(ctx, id)
 }
 
 func (r *queryResolver) PlaylistsByUserID(ctx context.Context, userID int) ([]*models.Playlist, error) {
-	return r.playlist.ListByUserID(userID)
+	return r.playlist.ListByUserID(ctx, userID)
 }
 
 func (r *queryResolver) Track(ctx context.Context, id int) (*models.Track, error) {
-	return r.track.Get(id)
+	return r.track.Get(ctx, id)
 }
 
 func (r *queryResolver) TracksByUserID(ctx context.Context, userID int) ([]*models.Track, error) {
-	return r.track.ListByUserID(userID)
+	return r.track.ListByUserID(ctx, userID)
 }
 
 func (r *queryResolver) NewReleaseTracks(ctx context.Context) ([]*models.Track, error) {
-	return r.track.List()
+	return r.track.List(ctx)
 }
 
 func (r *queryResolver) PickUpTracks(ctx context.Context) ([]*models.Track, error) {
-	return r.track.List()
+	return r.track.List(ctx)
 }
 
 func (r *queryResolver) User(ctx context.Context, id int) (*models.User, error) {
-	return r.user.Get(id)
+	return r.user.Get(ctx, id)
 }
 
-func (r *queryResolver) Me(ctx context.Context) (*models.User, error) {
-	id := ctx.Value("ID").(int)
-	return r.user.Get(id)
+func (r *queryResolver) CurrentUser(ctx context.Context) (*models.User, error) {
+	id := ctx.Value("id").(int)
+	return r.user.Get(ctx, id)
 }
 
 // Mutation returns generated.MutationResolver implementation.

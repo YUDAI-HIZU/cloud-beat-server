@@ -20,13 +20,6 @@ type Genre {
   name: String!
 }
 
-type MusicVideo {
-  id: ID!
-  user: User!
-  text: String!
-  videoUrl: String!
-}
-
 type Playlist {
   id: ID!
   title: String!
@@ -75,7 +68,7 @@ type Query {
   newReleaseTracks: [Track!]!
   pickUpTracks: [Track!]!
   user(id: ID!): User!
-  me: User! @authentication
+  currentUser: User! @authentication
 }
 
 input CreateExternalLinkInput {
@@ -84,11 +77,6 @@ input CreateExternalLinkInput {
   facebook: String
   youtube: String
   instagram: String
-}
-
-input CreateMusicVideoInput {
-  text: String!
-  video: Upload!
 }
 
 input CreatePlaylistInput {
@@ -123,24 +111,11 @@ input UpdateExternalLinkInput {
   instagram: String
 }
 
-input UpdateTrackInput {
-  title: String!
-  audio: Upload
-  thumbnail: Upload
-  description: String!
-  youtube_link: String
-  genre_id: ID!
-}
-
 input UpdateUserInput {
   icon: Upload
   displayName: String
   webUrl: String
   introduction: String
-}
-
-input DeleteMusicVideoInput {
-  id: ID!
 }
 
 input DeletePlaylistInput {
@@ -149,7 +124,7 @@ input DeletePlaylistInput {
 
 input DeletePlaylistSourceInput {
   playlistID: ID!
-  trackIDs: [ID!]!
+  trackID: ID!
 }
 
 input DeleteTrackInput {
@@ -158,17 +133,14 @@ input DeleteTrackInput {
 
 type Mutation {
   createExternalLink(input: CreateExternalLinkInput!): ExternalLink @authentication
-  createMusicVideo(input: CreateMusicVideoInput!): MusicVideo!
   createPlaylist(input: CreatePlaylistInput!): Playlist! @authentication
   createPlaylistSource(input: CreatePlaylistSourceInput!): PlaylistSource! @authentication
   createTrack(input: CreateTrackInput!): Track! @authentication
   createUser(input: CreateUserInput!): User!
   updateExternalLink(input: UpdateExternalLinkInput!): ExternalLink! @authentication
-  updateTrack(input: UpdateTrackInput!): Track! @authentication
   updateUser(input: UpdateUserInput!): User! @authentication
-  deleteMusicVideo(input: DeleteMusicVideoInput!): MusicVideo!
   deletePlaylist(input: DeletePlaylistInput!): Playlist! @authentication
-  deletePlaylistSource(input: DeletePlaylistSourceInput!): [PlaylistSource!]! @authentication
+  deletePlaylistSource(input: DeletePlaylistSourceInput!): PlaylistSource! @authentication
   deleteTrack(input: DeleteTrackInput!): Track! @authentication
   deleteUser: User! @authentication
 }

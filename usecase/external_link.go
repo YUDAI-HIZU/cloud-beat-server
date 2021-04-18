@@ -3,7 +3,7 @@ package usecase
 import (
 	"app/domain/models"
 	"app/domain/repository"
-	"app/graph/model"
+	"context"
 )
 
 type externalLinkUsecase struct {
@@ -11,9 +11,9 @@ type externalLinkUsecase struct {
 }
 
 type ExternalLinkUsecase interface {
-	Get(userID int) (*models.ExternalLink, error)
-	Create(userID int, input model.CreateExternalLinkInput) (*models.ExternalLink, error)
-	Update(userID int, input model.UpdateExternalLinkInput) (*models.ExternalLink, error)
+	Get(ctx context.Context, userID int) (*models.ExternalLink, error)
+	Create(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error)
+	Update(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error)
 }
 
 func NewExternalLinkUsecase(e repository.ExternalLinkRepository) ExternalLinkUsecase {
@@ -22,30 +22,14 @@ func NewExternalLinkUsecase(e repository.ExternalLinkRepository) ExternalLinkUse
 	}
 }
 
-func (u *externalLinkUsecase) Get(userID int) (*models.ExternalLink, error) {
-	return u.externalLinkRepository.Get(userID)
+func (u *externalLinkUsecase) Get(ctx context.Context, userID int) (*models.ExternalLink, error) {
+	return u.externalLinkRepository.Get(ctx, userID)
 }
 
-func (u *externalLinkUsecase) Create(userID int, input model.CreateExternalLinkInput) (*models.ExternalLink, error) {
-	externalLink := &models.ExternalLink{
-		Twitter:    *input.Twitter,
-		SoundCloud: *input.SoundCloud,
-		Facebook:   *input.Facebook,
-		Youtube:    *input.Youtube,
-		Instagram:  *input.Instagram,
-		UserID:     userID,
-	}
-	return u.externalLinkRepository.Create(externalLink)
+func (u *externalLinkUsecase) Create(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error) {
+	return u.externalLinkRepository.Create(ctx, externalLink)
 }
 
-func (u *externalLinkUsecase) Update(userID int, input model.UpdateExternalLinkInput) (*models.ExternalLink, error) {
-	externalLink := &models.ExternalLink{
-		Twitter:    *input.Twitter,
-		SoundCloud: *input.SoundCloud,
-		Facebook:   *input.Facebook,
-		Youtube:    *input.Youtube,
-		Instagram:  *input.Instagram,
-		UserID:     userID,
-	}
-	return u.externalLinkRepository.Update(externalLink)
+func (u *externalLinkUsecase) Update(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error) {
+	return u.externalLinkRepository.Update(ctx, externalLink)
 }

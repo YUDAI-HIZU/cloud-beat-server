@@ -1,8 +1,11 @@
 package repository
 
-import "github.com/99designs/gqlgen/graphql"
+import (
+	"app/domain/models"
+	"context"
+)
 
 type ImageRepository interface {
-	Upload(prefix string, img *graphql.Upload) (string, error)
-	Delete(path string) error
+	Upload(ctx context.Context, image *models.Image) error
+	Delete(ctx context.Context, objName string) error
 }

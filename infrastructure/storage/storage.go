@@ -9,8 +9,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func NewStorage() *storage.Client {
-	ctx := context.Background()
+func NewStorage(ctx context.Context) *storage.Client {
 	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.GCSAccount)))
 	if err != nil {
 		log.Fatalf("error getting storage client: %v\n", err)

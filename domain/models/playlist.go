@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type Playlist struct {
 	ID     int
@@ -12,4 +15,14 @@ type Playlist struct {
 	PlaylistSources []*PlaylistSource
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
+}
+
+func (p *Playlist) Validation() error {
+	if p.Title == "" {
+		return errors.New("required title")
+	}
+	if len(p.Title) > 20 {
+		return errors.New("title is 20 characters or less")
+	}
+	return nil
 }

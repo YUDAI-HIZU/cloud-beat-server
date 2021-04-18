@@ -17,9 +17,7 @@ func NewAuthPersistence(auth *auth.Client) repository.AuthRepository {
 	}
 }
 
-func (p *authPersistence) SetIDToClaims(uid string, id int) error {
-	ctx := context.Background()
-	claims := map[string]interface{}{"ID": id}
-
+func (p *authPersistence) SetIDToClaims(ctx context.Context, uid string, id int) error {
+	claims := map[string]interface{}{"id": id}
 	return p.auth.SetCustomUserClaims(ctx, uid, claims)
 }

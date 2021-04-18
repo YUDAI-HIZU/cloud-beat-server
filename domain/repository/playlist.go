@@ -1,10 +1,13 @@
 package repository
 
-import "app/domain/models"
+import (
+	"app/domain/models"
+	"context"
+)
 
 type PlaylistRepository interface {
-	Get(id int) (*models.Playlist, error)
-	ListByUserID(userID int) ([]*models.Playlist, error)
-	Create(playlist *models.Playlist) (*models.Playlist, error)
-	Delete(id int, userID int) (*models.Playlist, error)
+	Get(ctx context.Context, id int) (*models.Playlist, error)
+	ListByUserID(ctx context.Context, userID int) ([]*models.Playlist, error)
+	Create(ctx context.Context, playlist *models.Playlist) (*models.Playlist, error)
+	Delete(ctx context.Context, playlist *models.Playlist) (*models.Playlist, error)
 }

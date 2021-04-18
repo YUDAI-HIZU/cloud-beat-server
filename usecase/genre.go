@@ -3,6 +3,7 @@ package usecase
 import (
 	"app/domain/models"
 	"app/domain/repository"
+	"context"
 )
 
 type genreUsecase struct {
@@ -10,7 +11,7 @@ type genreUsecase struct {
 }
 
 type GenreUsecase interface {
-	List() ([]*models.Genre, error)
+	List(ctx context.Context) ([]*models.Genre, error)
 }
 
 func NewGenreUsecase(g repository.GenreRepository) GenreUsecase {
@@ -19,6 +20,6 @@ func NewGenreUsecase(g repository.GenreRepository) GenreUsecase {
 	}
 }
 
-func (u *genreUsecase) List() ([]*models.Genre, error) {
-	return u.genreRepository.List()
+func (u *genreUsecase) List(ctx context.Context) ([]*models.Genre, error) {
+	return u.genreRepository.List(ctx)
 }

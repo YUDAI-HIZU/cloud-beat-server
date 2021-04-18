@@ -2,14 +2,12 @@ package persistence
 
 import (
 	"app/config"
+	"app/domain/models"
 	"app/domain/repository"
 	"context"
-	"fmt"
 	"io"
 
 	"cloud.google.com/go/storage"
-	"github.com/99designs/gqlgen/graphql"
-	"github.com/google/uuid"
 )
 
 type imagePersistence struct {
@@ -22,19 +20,17 @@ func NewImagePersistence(storage *storage.Client) repository.ImageRepository {
 	}
 }
 
-func (p *imagePersistence) Upload(prefix string, img *graphql.Upload) (string, error) {
-	path := fmt.Sprintf("%s/%s/%s", config.ENV, prefix, uuid.New().String())
-	sw := p.storage.Bucket(config.BucketName).Object(path).NewWriter(context.Background())
-	sw.ContentType = img.ContentType
-	if _, err := io.Copy(sw, img.File); err != nil {
-		return "", err
+func (p *imagePersistence) Upload(ctx context.Context, image *models.Image) error {
+	wc := p.storage.Bucket(config.BucketName).Object(image.ObjName()).NewWriter(ctx)
+	if _, err := io.Copy(wc, image.Buf); err != nil {
+		return err
 	}
-	if err := sw.Close(); err != nil {
-		return "", err
+	if err := wc.Close(); err != nil {
+		return err
 	}
-	return path, nil
+	return nil
 }
 
-func (p *imagePersistence) Delete(path string) error {
-	return p.storage.Bucket(config.BucketName).Object(path).Delete(context.Background())
+func (p *imagePersistence) Delete(ctx context.Context, objName string) error {
+	return p.storage.Bucket(config.BucketName).Object(objName).Delete(ctx)
 }

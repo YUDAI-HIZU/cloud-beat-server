@@ -3,8 +3,9 @@ package usecase
 import (
 	"app/domain/models"
 	"app/domain/repository"
-	"app/graph/model"
-	"app/usecase/validations"
+	"context"
+
+	"github.com/google/uuid"
 )
 
 type userUsecase struct {
@@ -14,9 +15,9 @@ type userUsecase struct {
 }
 
 type UserUsecase interface {
-	Get(id int) (*models.User, error)
-	Create(input model.CreateUserInput) (*models.User, error)
-	Update(id int, input model.UpdateUserInput) (*models.User, error)
+	Get(ctx context.Context, id int) (*models.User, error)
+	Create(ctx context.Context, user *models.User) (*models.User, error)
+	Update(ctx context.Context, user *models.User, image *models.Image) (*models.User, error)
 }
 
 func NewUserUsecase(
@@ -31,47 +32,46 @@ func NewUserUsecase(
 	}
 }
 
-func (u *userUsecase) Get(id int) (*models.User, error) {
-	return u.userRepository.Get(id)
+func (u *userUsecase) Get(ctx context.Context, id int) (*models.User, error) {
+	return u.userRepository.Get(ctx, id)
 }
 
-func (u *userUsecase) Create(input model.CreateUserInput) (*models.User, error) {
-	user := &models.User{
-		UID:         input.UID,
-		DisplayName: input.DisplayName,
-	}
-
-	if err := validations.UserCreateValidation(user); err != nil {
+func (u *userUsecase) Create(ctx context.Context, user *models.User) (*models.User, error) {
+	if err := user.Validation(); err != nil {
 		return nil, err
 	}
 
-	user, err := u.userRepository.Create(user)
+	user, err := u.userRepository.Create(ctx, user)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = u.authRepository.SetIDToClaims(input.UID, user.ID); err != nil {
+	if err = u.authRepository.SetIDToClaims(ctx, user.UID, user.ID); err != nil {
 		return nil, err
 	}
 
 	return user, nil
 }
 
-func (u *userUsecase) Update(id int, input model.UpdateUserInput) (*models.User, error) {
-	var err error
-	user := &models.User{
-		ID:           id,
-		DisplayName:  *input.DisplayName,
-		WebURL:       *input.WebURL,
-		Introduction: *input.Introduction,
+func (u *userUsecase) Update(ctx context.Context, user *models.User, image *models.Image) (*models.User, error) {
+	user.IconName = uuid.New().String()
+
+	if err := user.Validation(); err != nil {
+		return nil, err
 	}
 
-	if input.Icon != nil {
-		user.IconPath, err = u.imageRepository.Upload("icons", input.Icon)
-		if err != nil {
-			return nil, err
-		}
+	if err := resizeImage(image); err != nil {
+		return nil, err
 	}
 
-	return u.userRepository.Update(user)
+	user, err := u.userRepository.Update(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := u.imageRepository.Upload(ctx, image); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

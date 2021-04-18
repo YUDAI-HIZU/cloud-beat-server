@@ -1,7 +1,10 @@
 package repository
 
-import "app/domain/models"
+import (
+	"app/domain/models"
+	"context"
+)
 
 type GenreRepository interface {
-	List() ([]*models.Genre, error)
+	List(ctx context.Context) ([]*models.Genre, error)
 }

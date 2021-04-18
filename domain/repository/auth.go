@@ -1,5 +1,7 @@
 package repository
 
+import "context"
+
 type AuthRepository interface {
-	SetIDToClaims(uid string, id int) error
+	SetIDToClaims(ctx context.Context, uid string, id int) error
 }

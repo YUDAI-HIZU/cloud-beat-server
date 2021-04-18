@@ -2,14 +2,12 @@ package persistence
 
 import (
 	"app/config"
+	"app/domain/models"
 	"app/domain/repository"
 	"context"
-	"fmt"
 	"io"
 
 	"cloud.google.com/go/storage"
-	"github.com/99designs/gqlgen/graphql"
-	"github.com/google/uuid"
 )
 
 type audioPersistence struct {
@@ -22,19 +20,17 @@ func NewAudioPersistence(storage *storage.Client) repository.AudioRepository {
 	}
 }
 
-func (p *audioPersistence) Upload(prefix string, audio *graphql.Upload) (string, error) {
-	path := fmt.Sprintf("%s/%s/%s", config.ENV, prefix, uuid.New().String())
-	sw := p.storage.Bucket(config.BucketName).Object(path).NewWriter(context.Background())
-	sw.ContentType = audio.ContentType
-	if _, err := io.Copy(sw, audio.File); err != nil {
-		return "", err
+func (p *audioPersistence) Upload(ctx context.Context, audio *models.Audio) error {
+	wc := p.storage.Bucket(config.BucketName).Object(audio.ObjName()).NewWriter(ctx)
+	if _, err := io.Copy(wc, audio.Buf); err != nil {
+		return err
 	}
-	if err := sw.Close(); err != nil {
-		return "", err
+	if err := wc.Close(); err != nil {
+		return err
 	}
-	return path, nil
+	return nil
 }
 
-func (p *audioPersistence) Delete(path string) error {
-	return p.storage.Bucket(config.BucketName).Object(path).Delete(context.Background())
+func (p *audioPersistence) Delete(ctx context.Context, objName string) error {
+	return p.storage.Bucket(config.BucketName).Object(objName).Delete(ctx)
 }

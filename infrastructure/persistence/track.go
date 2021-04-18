@@ -3,6 +3,7 @@ package persistence
 import (
 	"app/domain/models"
 	"app/domain/repository"
+	"context"
 
 	"github.com/jinzhu/gorm"
 )
@@ -17,7 +18,7 @@ func NewTrackPersistence(db *gorm.DB) repository.TrackRepository {
 	}
 }
 
-func (p *trackPersistence) List() ([]*models.Track, error) {
+func (p *trackPersistence) List(ctx context.Context) ([]*models.Track, error) {
 	tracks := make([]*models.Track, 0)
 	if err := p.db.Preload("User").Order("created_at desc").Find(&tracks).Error; err != nil {
 		return nil, err
@@ -25,7 +26,7 @@ func (p *trackPersistence) List() ([]*models.Track, error) {
 	return tracks, nil
 }
 
-func (p *trackPersistence) ListByUserID(userID int) ([]*models.Track, error) {
+func (p *trackPersistence) ListByUserID(ctx context.Context, userID int) ([]*models.Track, error) {
 	tracks := make([]*models.Track, 0)
 	if err := p.db.Preload("User").Where("user_id = ?", userID).Find(&tracks).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
@@ -36,7 +37,7 @@ func (p *trackPersistence) ListByUserID(userID int) ([]*models.Track, error) {
 	return tracks, nil
 }
 
-func (p *trackPersistence) Get(id int) (*models.Track, error) {
+func (p *trackPersistence) Get(ctx context.Context, id int) (*models.Track, error) {
 	track := &models.Track{}
 	if err := p.db.Preload("User").First(track, id).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
@@ -47,23 +48,15 @@ func (p *trackPersistence) Get(id int) (*models.Track, error) {
 	return track, nil
 }
 
-func (p *trackPersistence) Create(track *models.Track) (*models.Track, error) {
+func (p *trackPersistence) Create(ctx context.Context, track *models.Track) (*models.Track, error) {
 	if err := p.db.Create(track).Error; err != nil {
 		return nil, err
 	}
 	return track, nil
 }
 
-func (p *trackPersistence) Update(track *models.Track) (*models.Track, error) {
-	if err := p.db.Update(track).Error; err != nil {
-		return nil, err
-	}
-	return track, nil
-}
-
-func (p *trackPersistence) Delete(id int, userID int) (*models.Track, error) {
-	track := &models.Track{}
-	if err := p.db.Where("id = ? AND user_id = ?", id, userID).Take(track).Delete(track).Error; err != nil {
+func (p *trackPersistence) Delete(ctx context.Context, track *models.Track) (*models.Track, error) {
+	if err := p.db.Where("id = ? AND user_id = ?", track.ID, track.UserID).Take(track).Delete(track).Error; err != nil {
 		return nil, err
 	}
 	return track, nil

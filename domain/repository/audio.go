@@ -1,8 +1,11 @@
 package repository
 
-import "github.com/99designs/gqlgen/graphql"
+import (
+	"app/domain/models"
+	"context"
+)
 
 type AudioRepository interface {
-	Upload(prefix string, audio *graphql.Upload) (string, error)
-	Delete(path string) error
+	Upload(ctx context.Context, audio *models.Audio) error
+	Delete(ctx context.Context, objName string) error
 }

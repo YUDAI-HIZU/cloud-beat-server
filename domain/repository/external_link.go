@@ -1,9 +1,12 @@
 package repository
 
-import "app/domain/models"
+import (
+	"app/domain/models"
+	"context"
+)
 
 type ExternalLinkRepository interface {
-	Get(userID int) (*models.ExternalLink, error)
-	Create(externalLink *models.ExternalLink) (*models.ExternalLink, error)
-	Update(externalLink *models.ExternalLink) (*models.ExternalLink, error)
+	Get(ctx context.Context, userID int) (*models.ExternalLink, error)
+	Create(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error)
+	Update(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error)
 }

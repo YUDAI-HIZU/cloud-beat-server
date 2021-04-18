@@ -3,7 +3,7 @@
 CREATE TABLE users (
   id                 BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   uid                VARCHAR(255) UNIQUE NOT NULL,
-  icon_path          VARCHAR(255) DEFAULT NULL,
+  icon_name     VARCHAR(255) DEFAULT NULL,
   display_name       VARCHAR(255) DEFAULT NULL,
   web_url            VARCHAR(255) DEFAULT NULL,
   introduction       VARCHAR(255) DEFAULT NULL,

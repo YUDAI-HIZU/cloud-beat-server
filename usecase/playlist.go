@@ -3,7 +3,7 @@ package usecase
 import (
 	"app/domain/models"
 	"app/domain/repository"
-	"app/graph/model"
+	"context"
 )
 
 type playlistUsecase struct {
@@ -11,10 +11,10 @@ type playlistUsecase struct {
 }
 
 type PlaylistUsecase interface {
-	Get(id int) (*models.Playlist, error)
-	ListByUserID(userID int) ([]*models.Playlist, error)
-	Create(userID int, input model.CreatePlaylistInput) (*models.Playlist, error)
-	Delete(userID int, input model.DeletePlaylistInput) (*models.Playlist, error)
+	Get(ctx context.Context, id int) (*models.Playlist, error)
+	ListByUserID(ctx context.Context, userID int) ([]*models.Playlist, error)
+	Create(ctx context.Context, playlist *models.Playlist) (*models.Playlist, error)
+	Delete(ctx context.Context, playlist *models.Playlist) (*models.Playlist, error)
 }
 
 func NewPlaylistUsecase(p repository.PlaylistRepository) PlaylistUsecase {
@@ -23,30 +23,18 @@ func NewPlaylistUsecase(p repository.PlaylistRepository) PlaylistUsecase {
 	}
 }
 
-func (u *playlistUsecase) Get(id int) (*models.Playlist, error) {
-	return u.playlistRepository.Get(id)
+func (u *playlistUsecase) Get(ctx context.Context, id int) (*models.Playlist, error) {
+	return u.playlistRepository.Get(ctx, id)
 }
 
-func (u *playlistUsecase) ListByUserID(userID int) ([]*models.Playlist, error) {
-	return u.playlistRepository.ListByUserID(userID)
+func (u *playlistUsecase) ListByUserID(ctx context.Context, userID int) ([]*models.Playlist, error) {
+	return u.playlistRepository.ListByUserID(ctx, userID)
 }
 
-func (u *playlistUsecase) Create(userID int, input model.CreatePlaylistInput) (*models.Playlist, error) {
-	playlist := &models.Playlist{
-		UserID: userID,
-		Title:  input.Title,
-	}
-	for _, trackID := range input.TrackIDs {
-		playlist.PlaylistSources = append(
-			playlist.PlaylistSources,
-			&models.PlaylistSource{
-				TrackID: trackID,
-			},
-		)
-	}
-	return u.playlistRepository.Create(playlist)
+func (u *playlistUsecase) Create(ctx context.Context, playlist *models.Playlist) (*models.Playlist, error) {
+	return u.playlistRepository.Create(ctx, playlist)
 }
 
-func (u *playlistUsecase) Delete(userID int, input model.DeletePlaylistInput) (*models.Playlist, error) {
-	return u.playlistRepository.Delete(input.ID, userID)
+func (u *playlistUsecase) Delete(ctx context.Context, playlist *models.Playlist) (*models.Playlist, error) {
+	return u.playlistRepository.Delete(ctx, playlist)
 }
