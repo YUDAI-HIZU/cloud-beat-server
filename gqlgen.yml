@@ -64,4 +64,3 @@ models:
     model: app/domain/models.User
   DeviceToken:
     model: app/domain/models.DeviceToken
-
