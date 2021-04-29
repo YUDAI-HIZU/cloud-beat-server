@@ -10,7 +10,7 @@ import (
 )
 
 func NewStorage(ctx context.Context) *storage.Client {
-	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.GCSAccount)))
+	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.CloudStorageAccount)))
 	if err != nil {
 		log.Fatalf("error getting storage client: %v\n", err)
 	}

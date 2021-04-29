@@ -21,7 +21,7 @@ func NewAudioPersistence(storage *storage.Client) repository.AudioRepository {
 }
 
 func (p *audioPersistence) Upload(ctx context.Context, audio *models.Audio) error {
-	wc := p.storage.Bucket(config.BucketName).Object(audio.ObjName()).NewWriter(ctx)
+	wc := p.storage.Bucket(config.AssetsName).Object(audio.ObjName()).NewWriter(ctx)
 	if _, err := io.Copy(wc, audio.Buf); err != nil {
 		return err
 	}
@@ -32,5 +32,5 @@ func (p *audioPersistence) Upload(ctx context.Context, audio *models.Audio) erro
 }
 
 func (p *audioPersistence) Delete(ctx context.Context, objName string) error {
-	return p.storage.Bucket(config.BucketName).Object(objName).Delete(ctx)
+	return p.storage.Bucket(config.AssetsName).Object(objName).Delete(ctx)
 }

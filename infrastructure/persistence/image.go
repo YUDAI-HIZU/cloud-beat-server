@@ -21,7 +21,7 @@ func NewImagePersistence(storage *storage.Client) repository.ImageRepository {
 }
 
 func (p *imagePersistence) Upload(ctx context.Context, image *models.Image) error {
-	wc := p.storage.Bucket(config.BucketName).Object(image.ObjName()).NewWriter(ctx)
+	wc := p.storage.Bucket(config.AssetsName).Object(image.ObjName()).NewWriter(ctx)
 	if _, err := io.Copy(wc, image.Buf); err != nil {
 		return err
 	}
@@ -32,5 +32,5 @@ func (p *imagePersistence) Upload(ctx context.Context, image *models.Image) erro
 }
 
 func (p *imagePersistence) Delete(ctx context.Context, objName string) error {
-	return p.storage.Bucket(config.BucketName).Object(objName).Delete(ctx)
+	return p.storage.Bucket(config.AssetsName).Object(objName).Delete(ctx)
 }

@@ -22,7 +22,7 @@ func (u *User) IconUrl() string {
 	if u.IconName == "" {
 		return ""
 	}
-	return fmt.Sprintf("%s/%s/%s", config.AssetEndpoint, "icons", u.IconName)
+	return fmt.Sprintf("%s/%s/%s", config.AssetsEndpoint, "icons", u.IconName)
 }
 
 func (u *User) Validation() error {

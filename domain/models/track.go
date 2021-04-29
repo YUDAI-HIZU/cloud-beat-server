@@ -26,11 +26,11 @@ func (t *Track) ThumbnailUrl() string {
 	if t.ThumbName == "" {
 		return ""
 	}
-	return fmt.Sprintf("%s/%s/%s", config.AssetEndpoint, "thumbs", t.ThumbName)
+	return fmt.Sprintf("%s/%s/%s", config.AssetsEndpoint, "thumbs", t.ThumbName)
 }
 
 func (t *Track) AudioURL() string {
-	return fmt.Sprintf("%s/%s/%s", config.AssetEndpoint, "audios", t.AudioName)
+	return fmt.Sprintf("%s/%s/%s", config.AssetsEndpoint, "audios", t.AudioName)
 }
 
 func (t *Track) Validation() error {
