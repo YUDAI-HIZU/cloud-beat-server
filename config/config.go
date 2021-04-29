@@ -12,7 +12,7 @@ var (
 	CloudStorageAccount string
 	FirebaseAccount     string
 	AssetsName          string
-	AssetsPrifix        string
+	AssetsPrefix        string
 	AssetsEndpoint      string
 )
 
@@ -22,6 +22,6 @@ func init() {
 	CloudStorageAccount = os.Getenv("CLOUD_STORAGE_ACCOUNT")
 	FirebaseAccount = os.Getenv("FIREBASE_ACCOUNT")
 	AssetsName = os.Getenv("ASSETS_NAME")
-	AssetsPrifix = os.Getenv("ASSETS_PRIFIX")
-	AssetsEndpoint = fmt.Sprintf("%s/%s", AssetsPrifix, AssetsName)
+	AssetsPrefix = os.Getenv("ASSETS_PREFIX")
+	AssetsEndpoint = fmt.Sprintf("%s/%s", AssetsPrefix, AssetsName)
 }
