@@ -1,6 +1,5 @@
 
--- +goose Up
--- SQL in section 'Up' is executed when this migration is applied
+-- +migrate Up
 CREATE TABLE external_links (
   user_id     BIGINT(20) NOT NULL PRIMARY KEY,
   twitter     VARCHAR(255) DEFAULT NULL,
@@ -13,7 +12,5 @@ CREATE TABLE external_links (
   CONSTRAINT fk_external_links_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
--- +goose Down
--- SQL section 'Down' is executed when this migration is rolled back
-
+-- +migrate Down
 DROP TABLE external_links;

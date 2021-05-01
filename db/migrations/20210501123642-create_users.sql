@@ -1,5 +1,5 @@
--- +goose Up
--- SQL in section 'Up' is executed when this migration is applied
+
+-- +migrate Up
 CREATE TABLE users (
   id                 BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   uid                VARCHAR(255) UNIQUE NOT NULL,
@@ -12,6 +12,5 @@ CREATE TABLE users (
   INDEX(uid, display_name, introduction)
 );
 
--- +goose Down
--- SQL section 'Down' is executed when this migration is rolled back
+-- +migrate Down
 DROP TABLE users;

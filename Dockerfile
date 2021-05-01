@@ -5,8 +5,8 @@ WORKDIR /app
 ENV GO111MODULE=on
 
 RUN apk add --no-cache alpine-sdk git \
-    && go get github.com/pilu/fresh \
-    && go get bitbucket.org/liamstask/goose/cmd/goose
+    && go get github.com/rubenv/sql-migrate/... \
+    && go get github.com/pilu/fresh
 
 COPY . .
 
