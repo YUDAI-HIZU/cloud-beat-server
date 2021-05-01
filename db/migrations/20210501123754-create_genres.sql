@@ -1,5 +1,5 @@
--- +goose Up
--- SQL in section 'Up' is executed when this migration is applied
+
+-- +migrate Up
 CREATE TABLE genres (
   id              BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name            VARCHAR(255) NOT NULL,
@@ -8,6 +8,5 @@ CREATE TABLE genres (
   INDEX(name)
 );
 
--- +goose Down
--- SQL section 'Down' is executed when this migration is rolled back
+-- +migrate Down
 DROP TABLE genres;

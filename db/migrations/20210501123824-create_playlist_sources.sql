@@ -1,5 +1,5 @@
--- +goose Up
--- SQL in section 'Up' is executed when this migration is applied
+
+-- +migrate Up
 CREATE TABLE playlist_sources (
   playlist_id BIGINT(20) NOT NULL,
   track_id    BIGINT(20) NOT NULL,
@@ -8,6 +8,5 @@ CREATE TABLE playlist_sources (
   CONSTRAINT fk_playlist_sources_track_id FOREIGN KEY (track_id) REFERENCES tracks (id) ON DELETE CASCADE
 );
 
--- +goose Down
--- SQL section 'Down' is executed when this migration is rolled back
+-- +migrate Down
 DROP TABLE playlist_sources;

@@ -1,7 +1,0 @@
-development:
-  driver: mysql
-  open: $DATABASE_URL
-
-production:
-  driver: mysql
-  open: $DATABASE_URL

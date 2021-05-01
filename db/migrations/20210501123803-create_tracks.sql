@@ -1,5 +1,5 @@
--- +goose Up
--- SQL in section 'Up' is executed when this migration is applied
+
+-- +migrate Up
 CREATE TABLE tracks (
   id              BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   user_id         BIGINT(20) NOT NULL,
@@ -16,6 +16,5 @@ CREATE TABLE tracks (
   CONSTRAINT fk_tracks_genre_id FOREIGN KEY (genre_id) REFERENCES genres (id)
 );
 
--- +goose Down
--- SQL section 'Down' is executed when this migration is rolled back
+-- +migrate Down
 DROP TABLE tracks;
