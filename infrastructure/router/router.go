@@ -1,6 +1,7 @@
 package router
 
 import (
+	"app/config"
 	"app/infrastructure/middleware"
 	"net/http"
 
@@ -13,6 +14,10 @@ type router struct {
 }
 
 func NewRouter(h *handler.Server, p http.Handler) *gin.Engine {
+	if config.ENV == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.Default()
 
 	r.Use(gin.Logger())
@@ -27,6 +32,7 @@ func NewRouter(h *handler.Server, p http.Handler) *gin.Engine {
 	r.GET("/", func(c *gin.Context) {
 		p.ServeHTTP(c.Writer, c.Request)
 	})
+
 	return r
 }
 
