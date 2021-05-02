@@ -32,4 +32,7 @@ WORKDIR /app
 
 COPY --from=builder /src/main .
 
+COPY entrypoint.sh /
+ENTRYPOINT ["sh", "/entrypoint.sh"]
+
 CMD ["./main"]
