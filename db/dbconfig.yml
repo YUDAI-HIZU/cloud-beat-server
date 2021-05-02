@@ -1,9 +1,9 @@
 development:
   dialect: mysql
-  dir: ./db/migrations
+  dir: ./migrations
   datasource: $DATABASE_URL
 
 production:
   dialect: mysql
-  dir: ./db/migrations
+  dir: ./migrations
   datasource: $DATABASE_URL
