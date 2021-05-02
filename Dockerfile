@@ -10,6 +10,9 @@ RUN apk add --no-cache alpine-sdk git \
 
 COPY . .
 
+COPY entrypoint.sh /
+ENTRYPOINT ["sh", "/entrypoint.sh"]
+
 CMD ["fresh"]
 
 
@@ -31,5 +34,8 @@ FROM alpine as prod
 WORKDIR /app
 
 COPY --from=builder /src/main .
+
+COPY entrypoint.sh /
+ENTRYPOINT ["sh", "/entrypoint.sh"]
 
 CMD ["./main"]
