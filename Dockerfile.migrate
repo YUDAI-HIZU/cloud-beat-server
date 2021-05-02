@@ -1,0 +1,14 @@
+FROM golang:1.15.2-alpine
+
+WORKDIR /app
+
+ENV GO111MODULE=on
+
+RUN apk add --no-cache alpine-sdk git \
+    && go get github.com/rubenv/sql-migrate/...
+
+COPY . .
+
+WORKDIR /app/db
+
+CMD sql-migrate status -env="production"
