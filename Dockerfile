@@ -10,9 +10,6 @@ RUN apk add --no-cache alpine-sdk git \
 
 COPY . .
 
-COPY entrypoint.sh /
-ENTRYPOINT ["sh", "/entrypoint.sh"]
-
 CMD ["fresh"]
 
 
