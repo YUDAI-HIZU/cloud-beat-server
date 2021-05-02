@@ -39,6 +39,7 @@ jobs:
         run: |
           ./cloud_sql_proxy -instances=$GCP_CLOUD_SQL_INSTANCE
       
-      - name: Migrate run
+      - name: Run migration
         run: |
+          ./cloud_sql_proxy -instances=$GCP_CLOUD_SQL_INSTANCE &
           docker run -e DATABASE_URL=$DATABASE_URL $IMAGE
