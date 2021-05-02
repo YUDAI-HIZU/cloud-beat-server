@@ -12,6 +12,7 @@ COPY . .
 
 CMD ["fresh"]
 
+
 FROM golang:1.15.2-alpine as builder
 
 WORKDIR /src
