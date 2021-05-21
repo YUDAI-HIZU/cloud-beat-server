@@ -18,7 +18,7 @@ func NewExternalLinkPersistence(db *gorm.DB) repository.ExternalLinkRepository {
 	}
 }
 
-func (p *externalLinkPersistence) Get(ctx context.Context, userID int) (*models.ExternalLink, error) {
+func (p *externalLinkPersistence) Get(ctx context.Context, userID string) (*models.ExternalLink, error) {
 	externalLink := &models.ExternalLink{}
 	if err := p.db.Where("user_id = ?", userID).Take(externalLink).Error; err != nil {
 		return nil, err

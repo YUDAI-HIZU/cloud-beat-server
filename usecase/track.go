@@ -14,7 +14,7 @@ type trackUsecase struct {
 
 type TrackUsecase interface {
 	List(ctx context.Context) ([]*models.Track, error)
-	ListByUserID(ctx context.Context, userID int) ([]*models.Track, error)
+	ListByUserID(ctx context.Context, userID string) ([]*models.Track, error)
 	Get(ctx context.Context, id int) (*models.Track, error)
 	Create(ctx context.Context, track *models.Track, image *models.Image, audio *models.Audio) (*models.Track, error)
 	Delete(ctx context.Context, track *models.Track) (*models.Track, error)
@@ -36,7 +36,7 @@ func (u *trackUsecase) List(ctx context.Context) ([]*models.Track, error) {
 	return u.trackRepository.List(ctx)
 }
 
-func (u *trackUsecase) ListByUserID(ctx context.Context, userID int) ([]*models.Track, error) {
+func (u *trackUsecase) ListByUserID(ctx context.Context, userID string) ([]*models.Track, error) {
 	return u.trackRepository.ListByUserID(ctx, userID)
 }
 

@@ -33,9 +33,8 @@ func Auth() gin.HandlerFunc {
 			c.Next()
 			return
 		}
-		id := int(token.Claims["id"].(float64))
-		ctx = context.WithValue(ctx, "id", id)
-		c.Set("id", id)
+		ctx = context.WithValue(ctx, "id", token.UID)
+		c.Set("id", token.UID)
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}

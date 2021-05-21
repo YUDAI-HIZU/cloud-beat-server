@@ -46,12 +46,6 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	DeviceToken struct {
-		ID     func(childComplexity int) int
-		Token  func(childComplexity int) int
-		UserID func(childComplexity int) int
-	}
-
 	ExternalLink struct {
 		Facebook   func(childComplexity int) int
 		Instagram  func(childComplexity int) int
@@ -93,15 +87,15 @@ type ComplexityRoot struct {
 
 	Query struct {
 		CurrentUser          func(childComplexity int) int
-		ExternalLinkByUserID func(childComplexity int, userID int) int
+		ExternalLinkByUserID func(childComplexity int, userID string) int
 		Genres               func(childComplexity int) int
 		NewReleaseTracks     func(childComplexity int) int
 		PickUpTracks         func(childComplexity int) int
 		Playlist             func(childComplexity int, id int) int
-		PlaylistsByUserID    func(childComplexity int, userID int) int
+		PlaylistsByUserID    func(childComplexity int, userID string) int
 		Track                func(childComplexity int, id int) int
-		TracksByUserID       func(childComplexity int, userID int) int
-		User                 func(childComplexity int, id int) int
+		TracksByUserID       func(childComplexity int, userID string) int
+		User                 func(childComplexity int, id string) int
 	}
 
 	Track struct {
@@ -120,7 +114,6 @@ type ComplexityRoot struct {
 		ID           func(childComplexity int) int
 		IconUrl      func(childComplexity int) int
 		Introduction func(childComplexity int) int
-		UID          func(childComplexity int) int
 		WebURL       func(childComplexity int) int
 	}
 }
@@ -139,15 +132,15 @@ type MutationResolver interface {
 	DeleteUser(ctx context.Context) (*models.User, error)
 }
 type QueryResolver interface {
-	ExternalLinkByUserID(ctx context.Context, userID int) (*models.ExternalLink, error)
+	ExternalLinkByUserID(ctx context.Context, userID string) (*models.ExternalLink, error)
 	Genres(ctx context.Context) ([]*models.Genre, error)
 	Playlist(ctx context.Context, id int) (*models.Playlist, error)
-	PlaylistsByUserID(ctx context.Context, userID int) ([]*models.Playlist, error)
+	PlaylistsByUserID(ctx context.Context, userID string) ([]*models.Playlist, error)
 	Track(ctx context.Context, id int) (*models.Track, error)
-	TracksByUserID(ctx context.Context, userID int) ([]*models.Track, error)
+	TracksByUserID(ctx context.Context, userID string) ([]*models.Track, error)
 	NewReleaseTracks(ctx context.Context) ([]*models.Track, error)
 	PickUpTracks(ctx context.Context) ([]*models.Track, error)
-	User(ctx context.Context, id int) (*models.User, error)
+	User(ctx context.Context, id string) (*models.User, error)
 	CurrentUser(ctx context.Context) (*models.User, error)
 }
 
@@ -165,27 +158,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
-
-	case "DeviceToken.id":
-		if e.complexity.DeviceToken.ID == nil {
-			break
-		}
-
-		return e.complexity.DeviceToken.ID(childComplexity), true
-
-	case "DeviceToken.Token":
-		if e.complexity.DeviceToken.Token == nil {
-			break
-		}
-
-		return e.complexity.DeviceToken.Token(childComplexity), true
-
-	case "DeviceToken.userID":
-		if e.complexity.DeviceToken.UserID == nil {
-			break
-		}
-
-		return e.complexity.DeviceToken.UserID(childComplexity), true
 
 	case "ExternalLink.facebook":
 		if e.complexity.ExternalLink.Facebook == nil {
@@ -422,7 +394,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ExternalLinkByUserID(childComplexity, args["userID"].(int)), true
+		return e.complexity.Query.ExternalLinkByUserID(childComplexity, args["userID"].(string)), true
 
 	case "Query.genres":
 		if e.complexity.Query.Genres == nil {
@@ -467,7 +439,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.PlaylistsByUserID(childComplexity, args["userID"].(int)), true
+		return e.complexity.Query.PlaylistsByUserID(childComplexity, args["userID"].(string)), true
 
 	case "Query.track":
 		if e.complexity.Query.Track == nil {
@@ -491,7 +463,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.TracksByUserID(childComplexity, args["userID"].(int)), true
+		return e.complexity.Query.TracksByUserID(childComplexity, args["userID"].(string)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -503,7 +475,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.User(childComplexity, args["id"].(int)), true
+		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
 
 	case "Track.audioUrl":
 		if e.complexity.Track.AudioURL == nil {
@@ -588,13 +560,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Introduction(childComplexity), true
-
-	case "User.uid":
-		if e.complexity.User.UID == nil {
-			break
-		}
-
-		return e.complexity.User.UID(childComplexity), true
 
 	case "User.webUrl":
 		if e.complexity.User.WebURL == nil {
@@ -712,15 +677,8 @@ type Track {
   genre: Genre!
 }
 
-type DeviceToken {
-  id: ID!
-  userID: ID!
-  Token: String!
-}
-
 type User {
-  id: ID!
-  uid: String!
+  id: String!
   displayName: String!
   webUrl: String
   introduction: String
@@ -728,15 +686,15 @@ type User {
 }
 
 type Query {
-  externalLinkByUserID(userID: ID!): ExternalLink!
+  externalLinkByUserID(userID: String!): ExternalLink!
   genres: [Genre!]!
   playlist(id: ID!): Playlist!
-  playlistsByUserID(userID: ID!): [Playlist!]!
+  playlistsByUserID(userID: String!): [Playlist!]!
   track(id: ID!): Track!
-  tracksByUserID(userID: ID!): [Track!]!
+  tracksByUserID(userID: String!): [Track!]!
   newReleaseTracks: [Track!]!
   pickUpTracks: [Track!]!
-  user(id: ID!): User!
+  user(id: String!): User!
   currentUser: User! @authentication
 }
 
@@ -768,7 +726,7 @@ input CreateTrackInput {
 }
 
 input CreateUserInput {
-  uid: String!
+  id: String!
   displayName: String!
 }
 
@@ -989,10 +947,10 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_externalLinkByUserID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
+	var arg0 string
 	if tmp, ok := rawArgs["userID"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1019,10 +977,10 @@ func (ec *executionContext) field_Query_playlist_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Query_playlistsByUserID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
+	var arg0 string
 	if tmp, ok := rawArgs["userID"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1049,10 +1007,10 @@ func (ec *executionContext) field_Query_track_args(ctx context.Context, rawArgs 
 func (ec *executionContext) field_Query_tracksByUserID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
+	var arg0 string
 	if tmp, ok := rawArgs["userID"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1064,10 +1022,10 @@ func (ec *executionContext) field_Query_tracksByUserID_args(ctx context.Context,
 func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 int
+	var arg0 string
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1113,111 +1071,6 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
-
-func (ec *executionContext) _DeviceToken_id(ctx context.Context, field graphql.CollectedField, obj *models.DeviceToken) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "DeviceToken",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _DeviceToken_userID(ctx context.Context, field graphql.CollectedField, obj *models.DeviceToken) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "DeviceToken",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UserID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _DeviceToken_Token(ctx context.Context, field graphql.CollectedField, obj *models.DeviceToken) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "DeviceToken",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Token, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
 
 func (ec *executionContext) _ExternalLink_twitter(ctx context.Context, field graphql.CollectedField, obj *models.ExternalLink) (ret graphql.Marshaler) {
 	defer func() {
@@ -2336,7 +2189,7 @@ func (ec *executionContext) _Query_externalLinkByUserID(ctx context.Context, fie
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ExternalLinkByUserID(rctx, args["userID"].(int))
+		return ec.resolvers.Query().ExternalLinkByUserID(rctx, args["userID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2455,7 +2308,7 @@ func (ec *executionContext) _Query_playlistsByUserID(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PlaylistsByUserID(rctx, args["userID"].(int))
+		return ec.resolvers.Query().PlaylistsByUserID(rctx, args["userID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2539,7 +2392,7 @@ func (ec *executionContext) _Query_tracksByUserID(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TracksByUserID(rctx, args["userID"].(int))
+		return ec.resolvers.Query().TracksByUserID(rctx, args["userID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2651,7 +2504,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().User(rctx, args["id"].(int))
+		return ec.resolvers.Query().User(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3090,41 +2943,6 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _User_uid(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4533,11 +4351,11 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 
 	for k, v := range asMap {
 		switch k {
-		case "uid":
+		case "id":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uid"))
-			it.UID, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4726,43 +4544,6 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
-
-var deviceTokenImplementors = []string{"DeviceToken"}
-
-func (ec *executionContext) _DeviceToken(ctx context.Context, sel ast.SelectionSet, obj *models.DeviceToken) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, deviceTokenImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("DeviceToken")
-		case "id":
-			out.Values[i] = ec._DeviceToken_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "userID":
-			out.Values[i] = ec._DeviceToken_userID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "Token":
-			out.Values[i] = ec._DeviceToken_Token(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
 
 var externalLinkImplementors = []string{"ExternalLink"}
 
@@ -5225,11 +5006,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "uid":
-			out.Values[i] = ec._User_uid(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "displayName":
 			out.Values[i] = ec._User_displayName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5620,21 +5396,6 @@ func (ec *executionContext) unmarshalNID2int(ctx context.Context, v interface{})
 
 func (ec *executionContext) marshalNID2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
 	res := graphql.MarshalIntID(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalID(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalID(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

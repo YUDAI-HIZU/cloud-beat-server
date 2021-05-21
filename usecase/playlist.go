@@ -12,7 +12,7 @@ type playlistUsecase struct {
 
 type PlaylistUsecase interface {
 	Get(ctx context.Context, id int) (*models.Playlist, error)
-	ListByUserID(ctx context.Context, userID int) ([]*models.Playlist, error)
+	ListByUserID(ctx context.Context, userID string) ([]*models.Playlist, error)
 	Create(ctx context.Context, playlist *models.Playlist) (*models.Playlist, error)
 	Delete(ctx context.Context, playlist *models.Playlist) (*models.Playlist, error)
 }
@@ -27,7 +27,7 @@ func (u *playlistUsecase) Get(ctx context.Context, id int) (*models.Playlist, er
 	return u.playlistRepository.Get(ctx, id)
 }
 
-func (u *playlistUsecase) ListByUserID(ctx context.Context, userID int) ([]*models.Playlist, error) {
+func (u *playlistUsecase) ListByUserID(ctx context.Context, userID string) ([]*models.Playlist, error) {
 	return u.playlistRepository.ListByUserID(ctx, userID)
 }
 

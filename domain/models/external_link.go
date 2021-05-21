@@ -3,7 +3,7 @@ package models
 import "errors"
 
 type ExternalLink struct {
-	UserID     int
+	UserID     string
 	Twitter    string
 	SoundCloud string
 	Facebook   string

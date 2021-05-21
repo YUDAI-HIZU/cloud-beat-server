@@ -14,7 +14,7 @@ type Track struct {
 	AudioName   string
 	Description string
 	YoutubeLink string
-	UserID      int
+	UserID      string
 	GenreID     int
 	User        *User
 	Genre       *Genre

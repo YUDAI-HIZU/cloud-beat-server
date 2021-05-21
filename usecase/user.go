@@ -11,11 +11,10 @@ import (
 type userUsecase struct {
 	userRepository  repository.UserRepository
 	imageRepository repository.ImageRepository
-	authRepository  repository.AuthRepository
 }
 
 type UserUsecase interface {
-	Get(ctx context.Context, id int) (*models.User, error)
+	Get(ctx context.Context, id string) (*models.User, error)
 	Create(ctx context.Context, user *models.User) (*models.User, error)
 	Update(ctx context.Context, user *models.User, image *models.Image) (*models.User, error)
 }
@@ -23,16 +22,14 @@ type UserUsecase interface {
 func NewUserUsecase(
 	u repository.UserRepository,
 	i repository.ImageRepository,
-	a repository.AuthRepository,
 ) UserUsecase {
 	return &userUsecase{
 		u,
 		i,
-		a,
 	}
 }
 
-func (u *userUsecase) Get(ctx context.Context, id int) (*models.User, error) {
+func (u *userUsecase) Get(ctx context.Context, id string) (*models.User, error) {
 	return u.userRepository.Get(ctx, id)
 }
 
@@ -43,10 +40,6 @@ func (u *userUsecase) Create(ctx context.Context, user *models.User) (*models.Us
 
 	user, err := u.userRepository.Create(ctx, user)
 	if err != nil {
-		return nil, err
-	}
-
-	if err = u.authRepository.SetIDToClaims(ctx, user.UID, user.ID); err != nil {
 		return nil, err
 	}
 

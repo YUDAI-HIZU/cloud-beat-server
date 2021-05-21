@@ -11,7 +11,7 @@ type externalLinkUsecase struct {
 }
 
 type ExternalLinkUsecase interface {
-	Get(ctx context.Context, userID int) (*models.ExternalLink, error)
+	Get(ctx context.Context, userID string) (*models.ExternalLink, error)
 	Create(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error)
 	Update(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error)
 }
@@ -22,7 +22,7 @@ func NewExternalLinkUsecase(e repository.ExternalLinkRepository) ExternalLinkUse
 	}
 }
 
-func (u *externalLinkUsecase) Get(ctx context.Context, userID int) (*models.ExternalLink, error) {
+func (u *externalLinkUsecase) Get(ctx context.Context, userID string) (*models.ExternalLink, error) {
 	return u.externalLinkRepository.Get(ctx, userID)
 }
 

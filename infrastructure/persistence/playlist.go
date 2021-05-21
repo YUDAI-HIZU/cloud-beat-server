@@ -26,7 +26,7 @@ func (p *playlistPersistence) Get(ctx context.Context, id int) (*models.Playlist
 	return playlist, nil
 }
 
-func (p *playlistPersistence) ListByUserID(ctx context.Context, userID int) ([]*models.Playlist, error) {
+func (p *playlistPersistence) ListByUserID(ctx context.Context, userID string) ([]*models.Playlist, error) {
 	playlists := make([]*models.Playlist, 0)
 	if err := p.db.Preload("Tracks").Preload("User").Where("user_id = ?", userID).Find(&playlists).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {

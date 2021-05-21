@@ -6,7 +6,7 @@ import (
 )
 
 type ExternalLinkRepository interface {
-	Get(ctx context.Context, userID int) (*models.ExternalLink, error)
+	Get(ctx context.Context, userID string) (*models.ExternalLink, error)
 	Create(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error)
 	Update(ctx context.Context, externalLink *models.ExternalLink) (*models.ExternalLink, error)
 }
