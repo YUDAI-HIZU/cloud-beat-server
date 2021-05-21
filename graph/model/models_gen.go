@@ -34,7 +34,7 @@ type CreateTrackInput struct {
 }
 
 type CreateUserInput struct {
-	UID         string `json:"uid"`
+	ID          string `json:"id"`
 	DisplayName string `json:"displayName"`
 }
 

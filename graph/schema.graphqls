@@ -43,15 +43,8 @@ type Track {
   genre: Genre!
 }
 
-type DeviceToken {
-  id: ID!
-  userID: ID!
-  Token: String!
-}
-
 type User {
-  id: ID!
-  uid: String!
+  id: String!
   displayName: String!
   webUrl: String
   introduction: String
@@ -59,15 +52,15 @@ type User {
 }
 
 type Query {
-  externalLinkByUserID(userID: ID!): ExternalLink!
+  externalLinkByUserID(userID: String!): ExternalLink!
   genres: [Genre!]!
   playlist(id: ID!): Playlist!
-  playlistsByUserID(userID: ID!): [Playlist!]!
+  playlistsByUserID(userID: String!): [Playlist!]!
   track(id: ID!): Track!
-  tracksByUserID(userID: ID!): [Track!]!
+  tracksByUserID(userID: String!): [Track!]!
   newReleaseTracks: [Track!]!
   pickUpTracks: [Track!]!
-  user(id: ID!): User!
+  user(id: String!): User!
   currentUser: User! @authentication
 }
 
@@ -99,7 +92,7 @@ input CreateTrackInput {
 }
 
 input CreateUserInput {
-  uid: String!
+  id: String!
   displayName: String!
 }
 

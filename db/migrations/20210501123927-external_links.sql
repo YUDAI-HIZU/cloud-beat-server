@@ -1,7 +1,7 @@
 
 -- +migrate Up
 CREATE TABLE external_links (
-  user_id     BIGINT(20) NOT NULL PRIMARY KEY,
+  user_id     VARCHAR(255) NOT NULL PRIMARY KEY,
   twitter     VARCHAR(255) DEFAULT NULL,
   sound_cloud VARCHAR(255) DEFAULT NULL,
   facebook    VARCHAR(255) DEFAULT NULL,

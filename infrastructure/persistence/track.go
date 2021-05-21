@@ -26,7 +26,7 @@ func (p *trackPersistence) List(ctx context.Context) ([]*models.Track, error) {
 	return tracks, nil
 }
 
-func (p *trackPersistence) ListByUserID(ctx context.Context, userID int) ([]*models.Track, error) {
+func (p *trackPersistence) ListByUserID(ctx context.Context, userID string) ([]*models.Track, error) {
 	tracks := make([]*models.Track, 0)
 	if err := p.db.Preload("User").Where("user_id = ?", userID).Find(&tracks).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {

@@ -8,8 +8,7 @@ import (
 )
 
 type User struct {
-	ID           int
-	UID          string
+	ID           string
 	DisplayName  string
 	WebURL       string
 	Introduction string
@@ -26,9 +25,6 @@ func (u *User) IconUrl() string {
 }
 
 func (u *User) Validation() error {
-	if u.UID == "" {
-		return errors.New("required uid")
-	}
 	if u.DisplayName == "" {
 		return errors.New("required display name")
 	}

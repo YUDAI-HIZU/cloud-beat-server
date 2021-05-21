@@ -14,7 +14,7 @@ import (
 )
 
 func (r *mutationResolver) CreateExternalLink(ctx context.Context, input model.CreateExternalLinkInput) (*models.ExternalLink, error) {
-	userID := ctx.Value("id").(int)
+	userID := ctx.Value("id").(string)
 
 	e := &models.ExternalLink{
 		Twitter:    *input.Twitter,
@@ -29,7 +29,7 @@ func (r *mutationResolver) CreateExternalLink(ctx context.Context, input model.C
 }
 
 func (r *mutationResolver) CreatePlaylist(ctx context.Context, input model.CreatePlaylistInput) (*models.Playlist, error) {
-	userID := ctx.Value("id").(int)
+	userID := ctx.Value("id").(string)
 
 	p := &models.Playlist{
 		UserID: userID,
@@ -49,7 +49,7 @@ func (r *mutationResolver) CreatePlaylist(ctx context.Context, input model.Creat
 }
 
 func (r *mutationResolver) CreatePlaylistSource(ctx context.Context, input model.CreatePlaylistSourceInput) (*models.PlaylistSource, error) {
-	userID := ctx.Value("id").(int)
+	userID := ctx.Value("id").(string)
 
 	p := &models.PlaylistSource{
 		PlaylistID: input.PlaylistID,
@@ -63,7 +63,7 @@ func (r *mutationResolver) CreatePlaylistSource(ctx context.Context, input model
 }
 
 func (r *mutationResolver) CreateTrack(ctx context.Context, input model.CreateTrackInput) (*models.Track, error) {
-	userID := ctx.Value("id").(int)
+	userID := ctx.Value("id").(string)
 
 	t := &models.Track{
 		Title:       input.Title,
@@ -94,7 +94,7 @@ func (r *mutationResolver) CreateTrack(ctx context.Context, input model.CreateTr
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*models.User, error) {
 	u := &models.User{
-		UID:         input.UID,
+		ID:          input.ID,
 		DisplayName: input.DisplayName,
 	}
 
@@ -102,7 +102,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 }
 
 func (r *mutationResolver) UpdateExternalLink(ctx context.Context, input model.UpdateExternalLinkInput) (*models.ExternalLink, error) {
-	userID := ctx.Value("id").(int)
+	userID := ctx.Value("id").(string)
 
 	e := &models.ExternalLink{
 		Twitter:    *input.Twitter,
@@ -117,7 +117,7 @@ func (r *mutationResolver) UpdateExternalLink(ctx context.Context, input model.U
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*models.User, error) {
-	id := ctx.Value("id").(int)
+	id := ctx.Value("id").(string)
 
 	u := &models.User{
 		ID:           id,
@@ -138,7 +138,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUse
 }
 
 func (r *mutationResolver) DeletePlaylist(ctx context.Context, input model.DeletePlaylistInput) (*models.Playlist, error) {
-	userID := ctx.Value("id").(int)
+	userID := ctx.Value("id").(string)
 
 	p := &models.Playlist{
 		ID:     input.ID,
@@ -149,7 +149,7 @@ func (r *mutationResolver) DeletePlaylist(ctx context.Context, input model.Delet
 }
 
 func (r *mutationResolver) DeletePlaylistSource(ctx context.Context, input model.DeletePlaylistSourceInput) (*models.PlaylistSource, error) {
-	userID := ctx.Value("id").(int)
+	userID := ctx.Value("id").(string)
 
 	p := &models.PlaylistSource{
 		PlaylistID: input.PlaylistID,
@@ -163,7 +163,7 @@ func (r *mutationResolver) DeletePlaylistSource(ctx context.Context, input model
 }
 
 func (r *mutationResolver) DeleteTrack(ctx context.Context, input model.DeleteTrackInput) (*models.Track, error) {
-	userID := ctx.Value("id").(int)
+	userID := ctx.Value("id").(string)
 
 	t := &models.Track{
 		ID:     input.ID,
@@ -177,7 +177,7 @@ func (r *mutationResolver) DeleteUser(ctx context.Context) (*models.User, error)
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) ExternalLinkByUserID(ctx context.Context, userID int) (*models.ExternalLink, error) {
+func (r *queryResolver) ExternalLinkByUserID(ctx context.Context, userID string) (*models.ExternalLink, error) {
 	return r.externalLink.Get(ctx, userID)
 }
 
@@ -189,7 +189,7 @@ func (r *queryResolver) Playlist(ctx context.Context, id int) (*models.Playlist,
 	return r.playlist.Get(ctx, id)
 }
 
-func (r *queryResolver) PlaylistsByUserID(ctx context.Context, userID int) ([]*models.Playlist, error) {
+func (r *queryResolver) PlaylistsByUserID(ctx context.Context, userID string) ([]*models.Playlist, error) {
 	return r.playlist.ListByUserID(ctx, userID)
 }
 
@@ -197,7 +197,7 @@ func (r *queryResolver) Track(ctx context.Context, id int) (*models.Track, error
 	return r.track.Get(ctx, id)
 }
 
-func (r *queryResolver) TracksByUserID(ctx context.Context, userID int) ([]*models.Track, error) {
+func (r *queryResolver) TracksByUserID(ctx context.Context, userID string) ([]*models.Track, error) {
 	return r.track.ListByUserID(ctx, userID)
 }
 
@@ -209,12 +209,12 @@ func (r *queryResolver) PickUpTracks(ctx context.Context) ([]*models.Track, erro
 	return r.track.List(ctx)
 }
 
-func (r *queryResolver) User(ctx context.Context, id int) (*models.User, error) {
+func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
 	return r.user.Get(ctx, id)
 }
 
 func (r *queryResolver) CurrentUser(ctx context.Context) (*models.User, error) {
-	id := ctx.Value("id").(int)
+	id := ctx.Value("id").(string)
 	return r.user.Get(ctx, id)
 }
 

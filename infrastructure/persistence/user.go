@@ -18,9 +18,9 @@ func NewUserPersistence(db *gorm.DB) repository.UserRepository {
 	}
 }
 
-func (p *userPersistence) Get(ctx context.Context, id int) (*models.User, error) {
+func (p *userPersistence) Get(ctx context.Context, id string) (*models.User, error) {
 	user := &models.User{}
-	if err := p.db.First(user, id).Error; err != nil {
+	if err := p.db.Debug().First(user, id).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, err
 		}
